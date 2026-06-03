@@ -129,6 +129,37 @@ Reasons to start here:
 - It avoids long-lived connection complexity.
 - It is enough to validate the product behavior.
 
+Phase 2 implementation cannot start until:
+
+- Privacy review is completed.
+- Minimal backend hosting choice is documented.
+- Token and secret storage strategy is documented.
+- Abuse and rate-limit baseline is documented.
+- API draft is reviewed.
+- Local-only mode remains available.
+
+Phase 2 should include only:
+
+- Create a room.
+- Join a room with an invite code.
+- Generate a local `memberId` and `memberSecret`.
+- Store the member credential locally.
+- Post manual desktop or Web status updates.
+- Short-poll room state.
+- Leave a room.
+- Keep local-only mode available.
+
+Phase 2 must not include:
+
+- QQ Bot integration.
+- SSE or WebSocket.
+- Admin UI.
+- Account login.
+- Import or export.
+- End-to-end encryption.
+- Storage migration.
+- Tauri tray shortcut status.
+
 ### Phase 3: Server-Sent Events
 
 If polling feels laggy after real use, add SSE for room state changes. SSE is a
@@ -197,6 +228,35 @@ Admin features should be postponed unless product testing shows they are needed.
 If added later, they should use a separate room admin token rather than reusing
 ordinary member credentials.
 
+### Data Minimization Table
+
+| Data | Stored? | Reason | Retention | Notes |
+| --- | --- | --- | --- | --- |
+| `displayName` | Yes | Show a member in the town. | Until member leaves or room expires. | User-chosen town nickname, not a real QQ ID. |
+| `avatarKey` | Yes | Render a stable marker. | Until member leaves or room expires. | Uses app-local avatar vocabulary. |
+| `statusKey` | Yes | Show status and zone. | Until replaced, cleared, or expired. | Must be from supported status presets. |
+| `note` | Optional | User-authored context for a status. | Until replaced, cleared, or expired. | Should stay short and explicit. |
+| `expiresAt` | Optional | Enable fallback and stale-status cleanup. | Until replaced, cleared, or expired. | Clients may compute fallback locally. |
+| `memberSecret` | Client-side credential. | Authorize a member's own updates. | Until local identity is deleted or rotated. | Server should store only a verifier or hash if implemented. |
+| Real QQ ID | No | Not needed for shared town sync. | None. | QQ Bot openids are also scoped and should be minimized. |
+| QQ chat content | No | Status sync does not need chat logs. | None. | Bot commands should be parsed, not archived. |
+| Cookies, tokens, credentials | No | Not part of this product. | None. | Never collect QQ client credentials. |
+| Raw Bot command text | No by default. | Parsed fields are enough for state. | None unless abuse review requires short-lived logs. | Any logging must be explicit and reviewed. |
+
+### Privacy Risk Matrix
+
+| Risk | Scenario | Impact | Mitigation in architecture | Required before implementation |
+| --- | --- | --- | --- | --- |
+| Invite code leak | A room invite is shared outside the intended group. | Unwanted members can join or view the town. | Treat invite codes as private, allow future rotation. | Decide rotation and room-member removal policy. |
+| `memberSecret` leak | A local credential is copied from a device. | Attacker can update one member's status. | Scope secrets to one room/member and allow future revocation. | Define secret storage, rotation, and revocation. |
+| Room enumeration | Attackers guess room or invite identifiers. | Private towns become discoverable. | Use high-entropy IDs and hashed invite codes. | Document ID entropy and rate limits. |
+| Status spam | A client posts frequent updates. | Town becomes noisy or service load rises. | Rate-limit status updates by room/member. | Define baseline limits and error handling. |
+| Impersonation | A user joins with someone else's display name. | Confusion or social friction. | Keep member identity tied to local credential, not display name. | Decide whether duplicate names are allowed. |
+| Raw QQ Bot command retention | Bot stores original command text. | Notes or incidental content may be over-collected. | Store parsed status fields by default. | Define logging policy before Bot work. |
+| Sensitive server logs | Requests log notes, tokens, or secrets. | Private status data leaks through infrastructure. | Avoid logging request bodies and redact credentials. | Add logging rules before backend implementation. |
+| Delete or leave not propagating | A member leaves but old state remains visible. | User cannot escape stale shared data. | Include leave/delete semantics in the API design. | Define tombstone vs hard-delete behavior. |
+| Offline edit conflict | A client updates status while stale. | Unexpected status overwrite. | Newest valid update wins for the first slice. | Document conflict timestamps and client clock assumptions. |
+
 ## QQ Bot Integration Boundary
 
 The QQ Bot is only an optional command input for a shared town. It is not the
@@ -256,3 +316,20 @@ When implementation eventually starts, the smallest useful slice should be:
 
 That implementation should be planned separately and must include a new privacy
 review before any networked status data is transmitted.
+
+## Implementation Review Checklist
+
+Before any implementation starts, reviewers must confirm:
+
+- No QQ monitoring.
+- No ordinary group message ingestion.
+- No raw chat retention.
+- No real QQ IDs.
+- No mandatory account registration.
+- No background sync without a user joining a room.
+- Local-only mode still works.
+- The app has a safe failure mode if the backend is unavailable.
+- Status updates are explicit user actions or documented timer rules.
+- `qq_bot_command` still means explicit `@Bot` command only.
+- Credentials have a documented storage, rotation, and revocation story.
+- API drafts have privacy and abuse review before code is written.
