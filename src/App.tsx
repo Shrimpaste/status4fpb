@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { AddMemberForm } from './components/AddMemberForm'
 import { MemberStatusCard } from './components/MemberStatusCard'
 import { PixelHomeMap } from './components/PixelHomeMap'
+import { SharedTownDemoPanel } from './components/SharedTownDemoPanel'
 import { STATUS_PRESETS } from './data/statusPresets'
 import {
   usePixelHomeApp,
@@ -91,6 +92,8 @@ function App() {
         members={state.members}
         getMemberStatus={getMemberStatus}
       />
+
+      <SharedTownDemoPanel />
 
       <section className="status-dock" aria-label="群友状态">
         {state.members.length === 0

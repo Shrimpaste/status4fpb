@@ -245,4 +245,30 @@ describe('App', () => {
     expect(screen.getByText('还没有群友入住')).toBeInTheDocument()
     expect(window.localStorage.getItem(STORAGE_KEY)).toBeNull()
   })
+
+  it('renders the shared town demo section', () => {
+    render(<App />)
+
+    expect(
+      screen.getByRole('heading', { name: '共享小镇实验室' }),
+    ).toBeInTheDocument()
+  })
+
+  it('keeps local-only home controls while using the demo', () => {
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: '创建共享小镇' }))
+
+    expect(
+      screen.getByText('Local-first QQ group mood board'),
+    ).toBeInTheDocument()
+    expect(screen.getByLabelText('群友昵称')).toBeInTheDocument()
+    expect(screen.getByText('房间：共享小镇实验室')).toBeInTheDocument()
+  })
+
+  it('describes the demo as local mock with no network and refresh loss', () => {
+    render(<App />)
+
+    expect(screen.getByText('本地模拟，不联网，刷新后丢失')).toBeInTheDocument()
+  })
 })
