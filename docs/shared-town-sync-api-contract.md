@@ -66,6 +66,25 @@ Authorization: Bearer <memberSecret>
 The concrete secret format is an implementation detail. Logs must redact the
 `Authorization` header and must never print a raw `memberSecret`.
 
+### MemberSecret Security Notes
+
+`memberSecret` proves only that a requester can mutate one `roomId` and
+`memberId` pair. It is not a global account token, login session, QQ token, or
+admin credential.
+
+Security implications:
+
+- A leaked `memberSecret` lets an attacker impersonate only that member inside
+  that room.
+- A leaked `memberSecret` must not expose other rooms, other members, invite
+  codes, server admin features, or QQ data.
+- A future implementation should support rotate and revoke flows, but those are
+  not part of the Phase 2 minimal slice.
+- Clients should store `memberSecret` separately from public room/member state
+  where the platform allows it.
+- Server logs must never include `Authorization`, `memberSecret`, invite codes,
+  or credential verifier material.
+
 ## Endpoint Summary
 
 ```http
@@ -81,6 +100,27 @@ Future admin endpoint, not in the Phase 2 minimal slice:
 ```http
 POST /v1/rooms/{roomId}/invite/rotate
 ```
+
+## API Versioning
+
+All endpoints in this draft use the `/v1` prefix. The prefix means the contract
+is versioned from the start, not that the current draft is final.
+
+Compatibility rules:
+
+- Breaking changes must move to `/v2` or be expressed as additive optional
+  fields.
+- Responses may add optional fields without changing the version.
+- Responses must not delete, rename, or change the meaning of existing fields
+  inside `/v1`.
+- Clients must ignore unknown response fields.
+- Servers must accept missing optional request fields.
+- New required request fields require a new endpoint version or a backwards
+  compatible default.
+- Error envelopes should keep the same top-level shape across `/v1` endpoints.
+
+This document remains draft until implementation gates are satisfied. API
+versioning does not grant permission to implement networking in this round.
 
 ## Common Types
 
@@ -362,6 +402,79 @@ The first implementation may tombstone the member instead of hard-deleting it
 so other clients can stop rendering stale status. Retention policy must be
 reviewed before implementation.
 
+## Idempotency And Retries
+
+Network clients will eventually retry requests after timeouts or transient
+failures. This contract defines retry expectations before implementation, but it
+does not implement an idempotency store.
+
+General retry rules:
+
+- Clients may retry safe `GET /state` requests.
+- Clients may retry `POST /status` after network failure.
+- A future implementation may accept an `Idempotency-Key` header on mutation
+  endpoints to deduplicate retries.
+- `Idempotency-Key` values must not include `memberSecret`, invite codes, notes,
+  QQ data, or other sensitive content.
+- Retrying with the same body and idempotency key should return the same
+  successful result or the latest equivalent current-status result.
+
+Endpoint-specific expectations:
+
+- `POST /v1/rooms` is not assumed idempotent in Phase 2. Retrying may create
+  more than one room unless a later implementation adds an idempotency key.
+- `POST /v1/rooms/{inviteCode}/join` is not assumed idempotent by invite code
+  alone because joining generates a new local identity. A later implementation
+  may make join idempotent only when the same requester supplies a reviewed
+  idempotency key.
+- `POST /v1/rooms/{roomId}/members/{memberId}/status` may be retried. Because
+  Phase 2 stores current status rather than an event history, repeated identical
+  updates should converge to one current status.
+- `POST /v1/rooms/{roomId}/members/{memberId}/leave` should be safe to retry
+  after the member has already left and may return the existing left state.
+
+## Concurrency And Conflict Policy
+
+Phase 2 uses last-write-wins for status updates. This keeps the first shared
+slice inspectable and avoids complex merge UI.
+
+Conflict rules:
+
+- `updatedAt` is generated or normalized by the server.
+- The winning status for one member is the valid update with the latest server
+  `updatedAt`.
+- A member can only update their own status with their own credential.
+- Updates for different members do not conflict.
+- A leave operation wins over later status updates unless the member is
+  explicitly rejoined through a future reviewed flow.
+- Expiration fallback is display behavior. It should not create a manual
+  `unknown` status record.
+
+Offline edits are outside Phase 2. If a future client allows status changes
+while disconnected, it needs a separate conflict design covering queued writes,
+clock drift, and user-visible overwrite behavior.
+
+## Time Semantics
+
+All API timestamps are ISO 8601 UTC strings. Server-generated timestamps are the
+source of truth for shared state ordering.
+
+Rules:
+
+- `serverTime` appears in `GET /state` and mutation responses that need client
+  expiry comparisons.
+- `createdAt`, `updatedAt`, and status `startedAt` are generated or normalized
+  by the server.
+- `expiresAt` may be submitted by the client, but the server validates that it
+  is a future UTC timestamp within product limits.
+- Clients compare `expiresAt` with `serverTime`, not with an unsynchronized
+  local clock, when rendering shared state.
+- Local presets such as "end of day" must be converted by the client into a
+  concrete `expiresAt` before submission.
+- The server does not infer the user's local timezone.
+- The server does not infer status from clock behavior, activity patterns, QQ
+  message timing, or other passive signals.
+
 ## Validation Rules
 
 General request rules:
@@ -560,6 +673,32 @@ This contract does not include:
   implementation?
 - Should a future QQ Bot require explicit room linking before any command can
   affect shared state?
+
+## Phase 2 Implementation Review Checklist
+
+Before implementation starts, reviewers must be able to check every item below:
+
+- Privacy review complete.
+- API review complete.
+- Backend hosting choice documented.
+- Secret generation and storage decision documented.
+- Server-side credential verifier strategy documented.
+- Secret rotation and revocation decision documented.
+- Abuse and rate-limit baseline documented.
+- Logging redaction rules documented.
+- Local-only fallback preserved.
+- Backend-unavailable behavior documented.
+- API versioning rules accepted.
+- Idempotency and retry behavior accepted.
+- Conflict and time semantics accepted.
+- No QQ monitoring.
+- No real QQ IDs.
+- No raw chat retention.
+- No QQ cookies, tokens, passwords, or client credentials.
+- No mandatory account registration.
+- No SSE or WebSocket in Phase 2.
+- No QQ Bot implementation in Phase 2.
+- No database schema or migration written before implementation planning.
 
 ## Implementation Gates
 
