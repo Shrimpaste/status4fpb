@@ -41,6 +41,7 @@ describe('shared sync no-network guard', () => {
     expect(sourceFiles.map((file) => basename(file)).sort()).toEqual([
       'localMockSyncClient.ts',
       'localSharedTownSession.ts',
+      'sharedCredentialStore.ts',
       'sharedStateAdapter.ts',
       'sharedStateValidation.ts',
       'types.ts',
