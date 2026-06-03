@@ -218,6 +218,49 @@
   font-weight: 900;
 }
 
+.status-note,
+.status-expiry {
+  margin: 0;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.status-details {
+  display: grid;
+  gap: 8px;
+}
+
+.status-field {
+  display: grid;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.status-note-input,
+.status-expiration-select {
+  min-width: 0;
+  border: 3px solid var(--ink);
+  background: #fffaf0;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+}
+
+.status-note-input {
+  padding: 6px 8px;
+}
+
+.status-expiration-select {
+  padding: 5px 8px;
+}
+
+.status-note-input:focus-visible,
+.status-expiration-select:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
 .status-actions {
   display: flex;
   flex-wrap: wrap;

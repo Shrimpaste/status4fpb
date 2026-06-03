@@ -37,7 +37,59 @@ describe('MemberStatusCard', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '设置北北为缩圈中' }))
 
-    expect(onSelectStatus).toHaveBeenCalledWith('m1', 'scope_shrinking')
+    expect(onSelectStatus).toHaveBeenCalledWith('m1', {
+      statusKey: 'scope_shrinking',
+    })
+  })
+
+  it('passes note and expiration details when selecting a status', () => {
+    const onSelectStatus = vi.fn()
+    render(
+      <MemberStatusCard
+        member={member}
+        status={status}
+        statuses={Object.values(STATUS_PRESETS)}
+        isPendingDelete={false}
+        onSelectStatus={onSelectStatus}
+        onDeleteClick={vi.fn()}
+      />,
+    )
+
+    fireEvent.change(screen.getByLabelText('状态备注'), {
+      target: { value: '第二套卷' },
+    })
+    fireEvent.change(screen.getByLabelText('有效期'), {
+      target: { value: 'one_hour' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: '设置北北为缩圈中' }))
+
+    expect(onSelectStatus).toHaveBeenCalledWith('m1', {
+      statusKey: 'scope_shrinking',
+      note: '第二套卷',
+      expirationPreset: 'one_hour',
+    })
+  })
+
+  it('shows current note and expiration details', () => {
+    render(
+      <MemberStatusCard
+        member={member}
+        status={{
+          ...status,
+          note: '第二套卷',
+          expiresAt: '2026-06-03T13:00:00.000Z',
+        }}
+        statuses={Object.values(STATUS_PRESETS)}
+        isPendingDelete={false}
+        onSelectStatus={vi.fn()}
+        onDeleteClick={vi.fn()}
+      />,
+    )
+
+    const card = screen.getByLabelText('成员 北北')
+
+    expect(within(card).getByText('备注：第二套卷')).toBeInTheDocument()
+    expect(within(card).getByText(/^有效期至：/)).toBeInTheDocument()
   })
 
   it('renders delete and confirm delete states through props', () => {

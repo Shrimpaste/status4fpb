@@ -1,5 +1,6 @@
 import { isSelectableStatusKey } from '../data/statusPresets'
 import { createEmptyAppState } from '../domain/appState'
+import { isValidDateString } from '../domain/statusExpiration'
 import type {
   AppSettings,
   AppState,
@@ -140,12 +141,18 @@ function normalizeMemberStatus(value: unknown): MemberStatus | null {
     return null
   }
 
+  const expiresAt = isString(value.expiresAt) ? value.expiresAt : undefined
+
+  if (expiresAt && !isValidDateString(expiresAt)) {
+    return null
+  }
+
   return {
     memberId: value.memberId,
     statusKey: value.statusKey,
     ...(isString(value.note) ? { note: value.note } : {}),
     startedAt: value.startedAt,
-    ...(isString(value.expiresAt) ? { expiresAt: value.expiresAt } : {}),
+    ...(expiresAt ? { expiresAt } : {}),
     updatedAt: value.updatedAt,
   }
 }

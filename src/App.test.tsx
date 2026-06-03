@@ -115,6 +115,80 @@ describe('App', () => {
     expect(saved.statuses).toEqual({})
   })
 
+  it('saves status notes and expiration presets locally', () => {
+    render(<App />)
+
+    addMemberThroughUi()
+    fireEvent.change(screen.getByLabelText('状态备注'), {
+      target: { value: '第二套卷' },
+    })
+    fireEvent.change(screen.getByLabelText('有效期'), {
+      target: { value: 'one_hour' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: '设置北北为套卷中' }))
+
+    const memberCard = screen.getByLabelText('成员 北北')
+    expect(within(memberCard).getByText('备注：第二套卷')).toBeInTheDocument()
+    expect(within(memberCard).getByText(/^有效期至：/)).toBeInTheDocument()
+
+    const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '{}')
+    const memberId = saved.members[0].id
+
+    expect(saved.statuses[memberId].note).toBe('第二套卷')
+    expect(Date.parse(saved.statuses[memberId].expiresAt)).toBeGreaterThan(
+      Date.parse(saved.statuses[memberId].startedAt),
+    )
+  })
+
+  it('renders persisted current notes on startup', () => {
+    const state = setMemberStatus(
+      addMember(
+        createEmptyAppState(),
+        { id: 'm1', displayName: '北北', avatarKey: 'orange' },
+        NOW,
+      ),
+      {
+        memberId: 'm1',
+        statusKey: 'exam_paper',
+        note: '第二套卷',
+        expiresAt: '2999-06-03T13:00:00.000Z',
+      },
+      NOW,
+    )
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+
+    render(<App />)
+
+    const memberCard = screen.getByLabelText('成员 北北')
+    expect(within(memberCard).getByText('备注：第二套卷')).toBeInTheDocument()
+    expect(within(memberCard).getByText(/^有效期至：/)).toBeInTheDocument()
+  })
+
+  it('uses fallback status without showing stale notes after expiration', () => {
+    const state = setMemberStatus(
+      addMember(
+        createEmptyAppState(),
+        { id: 'm1', displayName: '北北', avatarKey: 'orange' },
+        NOW,
+      ),
+      {
+        memberId: 'm1',
+        statusKey: 'exam_paper',
+        note: '第二套卷',
+        expiresAt: '2000-06-03T13:00:00.000Z',
+      },
+      NOW,
+    )
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+
+    render(<App />)
+
+    const memberCard = screen.getByLabelText('成员 北北')
+    expect(within(memberCard).getByText('当前：失联中')).toBeInTheDocument()
+    expect(within(memberCard).queryByText('备注：第二套卷')).toBeNull()
+    expect(within(memberCard).queryByText(/^有效期至：/)).toBeNull()
+  })
+
   it('clears pending delete confirmation when adding a member', () => {
     render(<App />)
 

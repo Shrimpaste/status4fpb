@@ -1,5 +1,9 @@
 import { useMemo, useState } from 'react'
 import { addMember, removeMember, setMemberStatus } from '../domain/appState'
+import {
+  computeExpiresAt,
+  type ExpirationPresetKey,
+} from '../domain/statusExpiration'
 import { getEffectiveStatus } from '../domain/statusLogic'
 import { createLocalStorageStore } from '../storage/localStorageStore'
 import type {
@@ -12,12 +16,18 @@ import { createMemberId } from './createMemberId'
 
 const avatarKeys = ['orange', 'cyan', 'green', 'rose']
 
+export type SetVirtualMemberStatusInput = {
+  statusKey: SelectableStatusKey
+  note?: string
+  expirationPreset?: ExpirationPresetKey
+}
+
 export type PixelHomeApp = {
   state: AppState
   addVirtualMember: (displayName: string) => void
   setVirtualMemberStatus: (
     memberId: string,
-    statusKey: SelectableStatusKey,
+    input: SetVirtualMemberStatusInput,
   ) => void
   removeVirtualMember: (memberId: string) => void
   getMemberStatus: (memberId: string) => EffectiveStatus
@@ -63,11 +73,24 @@ export function usePixelHomeApp(): PixelHomeApp {
 
   function setVirtualMemberStatus(
     memberId: string,
-    statusKey: SelectableStatusKey,
+    input: SetVirtualMemberStatusInput,
   ) {
     const now = new Date().toISOString()
+    const note = input.note?.trim()
+    const expiresAt = computeExpiresAt(input.expirationPreset ?? 'none', now)
 
-    commit((current) => setMemberStatus(current, { memberId, statusKey }, now))
+    commit((current) =>
+      setMemberStatus(
+        current,
+        {
+          memberId,
+          statusKey: input.statusKey,
+          ...(note ? { note } : {}),
+          ...(expiresAt ? { expiresAt } : {}),
+        },
+        now,
+      ),
+    )
   }
 
   function removeVirtualMember(memberId: string) {

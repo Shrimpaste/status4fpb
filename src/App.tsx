@@ -3,8 +3,10 @@ import { AddMemberForm } from './components/AddMemberForm'
 import { MemberStatusCard } from './components/MemberStatusCard'
 import { PixelHomeMap } from './components/PixelHomeMap'
 import { STATUS_PRESETS } from './data/statusPresets'
-import { usePixelHomeApp } from './app/usePixelHomeApp'
-import type { SelectableStatusKey } from './types/domain'
+import {
+  usePixelHomeApp,
+  type SetVirtualMemberStatusInput,
+} from './app/usePixelHomeApp'
 import './App.css'
 
 const featuredStatuses = [
@@ -29,9 +31,12 @@ function App() {
     setPendingDeleteId(null)
   }
 
-  function handleStatusClick(memberId: string, statusKey: SelectableStatusKey) {
+  function handleStatusClick(
+    memberId: string,
+    input: SetVirtualMemberStatusInput,
+  ) {
     setPendingDeleteId(null)
-    setVirtualMemberStatus(memberId, statusKey)
+    setVirtualMemberStatus(memberId, input)
   }
 
   function handleDeleteClick(memberId: string) {

@@ -148,6 +148,28 @@ describe('localStorage store', () => {
     })
   })
 
+  it('drops persisted statuses with invalid expiresAt values', () => {
+    const storage = new MemoryStorage()
+    const state = createPopulatedState()
+    storage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        ...state,
+        statuses: {
+          m1: {
+            ...state.statuses.m1,
+            expiresAt: 'not-a-date',
+          },
+        },
+      }),
+    )
+
+    const loaded = createLocalStorageStore(storage).load()
+
+    expect(loaded.members).toEqual(state.members)
+    expect(loaded.statuses).toEqual({})
+  })
+
   it('does not persist sensitive or unknown fields', () => {
     const storage = new MemoryStorage()
     const store = createLocalStorageStore(storage)
