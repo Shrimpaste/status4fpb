@@ -38,7 +38,10 @@ describe('shared sync no-network guard', () => {
   it('does not introduce network clients in shared-sync sources', () => {
     const sourceFiles = collectSourceFiles(sharedSyncDirectory)
 
-    expect(sourceFiles.map((file) => basename(file))).toEqual(['types.ts'])
+    expect(sourceFiles.map((file) => basename(file)).sort()).toEqual([
+      'localMockSyncClient.ts',
+      'types.ts',
+    ])
 
     const violations = sourceFiles.flatMap((file) => {
       const source = readFileSync(file, 'utf8')
