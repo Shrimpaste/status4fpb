@@ -40,6 +40,7 @@ describe('shared sync no-network guard', () => {
 
     expect(sourceFiles.map((file) => basename(file)).sort()).toEqual([
       'localMockSyncClient.ts',
+      'sharedStateAdapter.ts',
       'types.ts',
     ])
 
