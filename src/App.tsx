@@ -16,17 +16,35 @@ const selectableStatuses = Object.values(STATUS_PRESETS).filter(
 
 function App() {
   const [displayName, setDisplayName] = useState('')
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
   const {
     state,
     addVirtualMember,
     setVirtualMemberStatus,
+    removeVirtualMember,
     getMemberStatus,
   } = usePixelHomeApp()
 
   function handleAddMember(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     addVirtualMember(displayName)
+    setPendingDeleteId(null)
     setDisplayName('')
+  }
+
+  function handleStatusClick(memberId: string, statusKey: SelectableStatusKey) {
+    setPendingDeleteId(null)
+    setVirtualMemberStatus(memberId, statusKey)
+  }
+
+  function handleDeleteClick(memberId: string) {
+    if (pendingDeleteId === memberId) {
+      removeVirtualMember(memberId)
+      setPendingDeleteId(null)
+      return
+    }
+
+    setPendingDeleteId(memberId)
   }
 
   return (
@@ -106,15 +124,25 @@ function App() {
                         type="button"
                         key={preset.statusKey}
                         className="status-action"
-                        onClick={() =>
-                          setVirtualMemberStatus(member.id, preset.statusKey)
-                        }
+                        onClick={() => handleStatusClick(member.id, preset.statusKey)}
                         aria-label={`设置${member.displayName}为${preset.label}`}
                       >
                         {preset.label}
                       </button>
                     ))}
                   </div>
+                  <button
+                    type="button"
+                    className="delete-action"
+                    onClick={() => handleDeleteClick(member.id)}
+                    aria-label={
+                      pendingDeleteId === member.id
+                        ? `确认删除${member.displayName}`
+                        : `删除${member.displayName}`
+                    }
+                  >
+                    {pendingDeleteId === member.id ? '确认删除' : '删除'}
+                  </button>
                 </article>
               )
             })}

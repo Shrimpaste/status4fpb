@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { addMember, setMemberStatus } from '../domain/appState'
+import { addMember, removeMember, setMemberStatus } from '../domain/appState'
 import { getEffectiveStatus } from '../domain/statusLogic'
 import { createLocalStorageStore } from '../storage/localStorageStore'
 import type {
@@ -19,6 +19,7 @@ export type PixelHomeApp = {
     memberId: string,
     statusKey: SelectableStatusKey,
   ) => void
+  removeVirtualMember: (memberId: string) => void
   getMemberStatus: (memberId: string) => EffectiveStatus
 }
 
@@ -69,6 +70,10 @@ export function usePixelHomeApp(): PixelHomeApp {
     commit((current) => setMemberStatus(current, { memberId, statusKey }, now))
   }
 
+  function removeVirtualMember(memberId: string) {
+    commit((current) => removeMember(current, memberId))
+  }
+
   function getMemberStatus(memberId: Member['id']) {
     return getEffectiveStatus(memberId, state.statuses, new Date().toISOString(), {
       expiredFallback: state.settings.expiredFallback,
@@ -79,6 +84,7 @@ export function usePixelHomeApp(): PixelHomeApp {
     state,
     addVirtualMember,
     setVirtualMemberStatus,
+    removeVirtualMember,
     getMemberStatus,
   }
 }

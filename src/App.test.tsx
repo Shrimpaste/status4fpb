@@ -93,4 +93,42 @@ describe('App', () => {
     const memberCard = screen.getByLabelText('成员 北北')
     expect(within(memberCard).getByText('当前：缩圈中')).toBeInTheDocument()
   })
+
+  it('deletes a member only after confirmation and cleans persisted status', () => {
+    render(<App />)
+
+    addMemberThroughUi()
+    fireEvent.click(screen.getByRole('button', { name: '设置北北为套卷中' }))
+
+    fireEvent.click(screen.getByRole('button', { name: '删除北北' }))
+
+    expect(screen.getByLabelText('成员 北北')).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: '确认删除北北' }),
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: '确认删除北北' }))
+
+    expect(screen.queryByLabelText('成员 北北')).not.toBeInTheDocument()
+    const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '{}')
+    expect(saved.members).toEqual([])
+    expect(saved.statuses).toEqual({})
+  })
+
+  it('clears pending delete confirmation when adding a member', () => {
+    render(<App />)
+
+    addMemberThroughUi()
+    fireEvent.click(screen.getByRole('button', { name: '删除北北' }))
+
+    expect(
+      screen.getByRole('button', { name: '确认删除北北' }),
+    ).toBeInTheDocument()
+
+    addMemberThroughUi('南南')
+
+    expect(screen.queryByRole('button', { name: '确认删除北北' })).toBeNull()
+    expect(screen.getByLabelText('成员 北北')).toBeInTheDocument()
+    expect(screen.getByLabelText('成员 南南')).toBeInTheDocument()
+  })
 })
