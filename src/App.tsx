@@ -1,21 +1,72 @@
+import { useState } from 'react'
+import { AddMemberForm } from './components/AddMemberForm'
+import { MemberStatusCard } from './components/MemberStatusCard'
+import { PixelHomeMap } from './components/PixelHomeMap'
+import { STATUS_PRESETS } from './data/statusPresets'
+import {
+  usePixelHomeApp,
+  type SetVirtualMemberStatusInput,
+} from './app/usePixelHomeApp'
 import './App.css'
 
-const statusPresets = [
-  {
-    label: '套卷中',
-    place: '自习桌',
-    note: '桌面堆满真题，进度条正在慢慢爬。',
-    className: 'desk',
-  },
-  {
-    label: '缩圈中',
-    place: '缩圈法阵',
-    note: '复习范围正在被压成更小的一圈。',
-    className: 'circle',
-  },
+const featuredStatuses = [
+  STATUS_PRESETS.exam_paper,
+  STATUS_PRESETS.scope_shrinking,
 ]
 
+const statuses = Object.values(STATUS_PRESETS)
+
 function App() {
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
+  const [pendingReset, setPendingReset] = useState(false)
+  const {
+    state,
+    addVirtualMember,
+    setVirtualMemberStatus,
+    removeVirtualMember,
+    resetPixelHome,
+    getMemberStatus,
+  } = usePixelHomeApp()
+
+  function handleAddMember(displayName: string) {
+    addVirtualMember(displayName)
+    setPendingDeleteId(null)
+    setPendingReset(false)
+  }
+
+  function handleStatusClick(
+    memberId: string,
+    input: SetVirtualMemberStatusInput,
+  ) {
+    setPendingDeleteId(null)
+    setPendingReset(false)
+    setVirtualMemberStatus(memberId, input)
+  }
+
+  function handleDeleteClick(memberId: string) {
+    setPendingReset(false)
+
+    if (pendingDeleteId === memberId) {
+      removeVirtualMember(memberId)
+      setPendingDeleteId(null)
+      return
+    }
+
+    setPendingDeleteId(memberId)
+  }
+
+  function handleResetClick() {
+    setPendingDeleteId(null)
+
+    if (pendingReset) {
+      resetPixelHome()
+      setPendingReset(false)
+      return
+    }
+
+    setPendingReset(true)
+  }
+
   return (
     <main className="app-shell">
       <section className="intro-panel">
@@ -24,47 +75,47 @@ function App() {
         <p className="lede">
           先用手动状态和虚拟头像搭起一个安全的像素小镇，再逐步扩展状态逻辑和授权数据源。
         </p>
-        <div className="action-row">
-          <button
-            type="button"
-            className="primary-action"
-            disabled
-            title="成员管理将在下一轮实现"
-          >
-            添加群友
-          </button>
-          <span className="privacy-note">MVP 不接入 QQ 私有接口</span>
-        </div>
+        <AddMemberForm onAddMember={handleAddMember} />
+        <span className="privacy-note">MVP 不接入 QQ 私有接口</span>
+        <button
+          type="button"
+          className="reset-action"
+          onClick={handleResetClick}
+          aria-label={pendingReset ? '确认重置家园' : '重置家园'}
+        >
+          {pendingReset ? '确认重置家园' : '重置家园'}
+        </button>
       </section>
 
-      <section className="pixel-home" aria-label="像素家园预览">
-        <div className="map-grid" aria-hidden="true">
-          <div className="room room-study">
-            <span className="sprite sprite-a"></span>
-            <span className="bubble">套卷中</span>
-          </div>
-          <div className="room room-circle">
-            <span className="magic-ring"></span>
-            <span className="sprite sprite-b"></span>
-            <span className="bubble">缩圈中</span>
-          </div>
-          <div className="room room-garden">
-            <span className="pixel-tree"></span>
-          </div>
-          <div className="room room-mist">
-            <span className="question-tile">?</span>
-          </div>
-        </div>
-      </section>
+      <PixelHomeMap
+        members={state.members}
+        getMemberStatus={getMemberStatus}
+      />
 
-      <section className="status-dock" aria-label="核心状态">
-        {statusPresets.map((status) => (
-          <article className={`status-card ${status.className}`} key={status.label}>
-            <p className="status-place">{status.place}</p>
-            <h2>{status.label}</h2>
-            <p>{status.note}</p>
-          </article>
-        ))}
+      <section className="status-dock" aria-label="群友状态">
+        {state.members.length === 0
+          ? featuredStatuses.map((status) => (
+              <article className="status-card" key={status.statusKey}>
+                <p className="status-place">{status.placeLabel}</p>
+                <h2>{status.label}</h2>
+                <p>{status.description}</p>
+              </article>
+            ))
+          : state.members.map((member) => {
+              const status = getMemberStatus(member.id)
+
+              return (
+                <MemberStatusCard
+                  key={member.id}
+                  member={member}
+                  status={status}
+                  statuses={statuses}
+                  isPendingDelete={pendingDeleteId === member.id}
+                  onSelectStatus={handleStatusClick}
+                  onDeleteClick={handleDeleteClick}
+                />
+              )
+            })}
       </section>
     </main>
   )

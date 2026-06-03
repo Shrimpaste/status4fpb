@@ -2,23 +2,36 @@
 
 ## Product Boundary
 
-This app is a fun QQ group friend status display, not a QQ automation client. The MVP is manual and local-first. It avoids private QQ APIs, unauthorized monitoring, chat scraping, and real QQ identifiers unless a later user-approved design adds them safely.
+This app is a fun QQ group friend status display, not a QQ automation client. The MVP is manual and local-first. It avoids private QQ APIs, unauthorized monitoring, chat scraping, and real QQ identifiers.
 
-## MVP
+## MVP Behavior
 
-- Show a pixel-home scene for group friends.
-- Include status presets "套卷中" and "缩圈中".
-- Use virtual members with display names and simple avatar styles.
-- Let users add members and set statuses in later MVP tasks.
+- Show a pixel-home scene for virtual group friends.
+- Include status presets `套卷中` and `缩圈中`.
+- Let users add virtual members with display names.
+- Let users set manual statuses.
+- Let users add a short note to the status.
+- Let users choose a preset expiration.
+- Use `失联中` as the expired fallback by default.
 - Persist local data in the browser.
-- Keep status logic testable outside the UI.
+- Let users delete members with a confirmation step.
+- Let users reset the whole local home with a confirmation step.
 
 ## Visual Feel
 
 The app should feel like a compact study-town dashboard: playful, pixel-like, and immediately usable. The first screen is the status home itself, with a map preview and status cards rather than a landing page.
 
+## Current Non-Goals
+
+- Automatic QQ status monitoring.
+- QQ Bot integration.
+- Real QQ IDs or account binding.
+- Cloud sync.
+- Custom date/time picker.
+- Real-time countdown UI.
+
 ## Open Product Questions
 
 - Should the final packaging remain a web app, or become a Windows desktop utility later?
-- Should expired statuses default to "失联中" or "空闲中"?
-- Which extra status presets should ship beyond "套卷中" and "缩圈中"?
+- Should the expired fallback remain `失联中`, or should users be able to choose `空闲中`?
+- Should import/export be added before any QQ-adjacent integration is considered?

@@ -8,12 +8,14 @@ Use this checklist after every implementation round before asking the ChatGPT we
 - Is there any unnecessary abstraction or speculative extension?
 - Are type names and status keys consistent across tests and implementation?
 - Are error states handled without crashing the app?
+- Did the change avoid broad refactors outside the current task?
 
 ## Privacy And Safety
 
 - Does the change avoid QQ private APIs and unauthorized monitoring?
 - Does it avoid collecting real QQ IDs by default?
 - Does it keep MVP data local?
+- Does storage reject or drop invalid data conservatively?
 - Is any imported/exported data explicitly user-provided?
 
 ## UI
@@ -22,6 +24,7 @@ Use this checklist after every implementation round before asking the ChatGPT we
 - Do important controls have accessible names?
 - Does text fit on narrow and wide viewports?
 - Are pixel visuals purposeful rather than decorative clutter?
+- Are destructive actions confirmed?
 
 ## Tests And Verification
 
@@ -29,3 +32,4 @@ Use this checklist after every implementation round before asking the ChatGPT we
 - Do `npm test`, `npm run lint`, and `npm run build` pass after the change?
 - Was the app opened in a browser for visual verification after UI changes?
 - Were self-review notes sent to the ChatGPT web thread for复审?
+- Does documentation avoid promising features that are not implemented?
