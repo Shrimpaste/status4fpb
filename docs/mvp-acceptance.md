@@ -40,7 +40,7 @@ Expected result: all commands pass without errors.
 1. Add a member named `南南`.
 2. Set any status.
 3. Click `重置家园`.
-4. Confirm the member remains visible and the button changes to `确认重置`.
+4. Confirm the member remains visible and the button changes to `确认重置家园`.
 5. Click `确认重置家园`.
 6. Confirm the empty pixel home returns.
 7. Refresh and confirm the home remains empty.
@@ -63,6 +63,26 @@ Expected:
 - Stored data contains virtual members, status keys, notes, timestamps, and settings.
 - Stored data does not contain real QQ IDs, cookies, tokens, or scraped chat content.
 - Data stays in browser `localStorage`.
+
+## Local Data Reset Check
+
+The app stores MVP data in browser `localStorage` under:
+
+```text
+qq-status-pixel-home:v1
+```
+
+Expected reset behavior:
+
+- The in-app `重置家园` action clears this key.
+- It only clears status4fpb data in the current browser.
+- It does not affect QQ data, QQ clients, accounts, chats, cookies, or tokens.
+
+Optional corrupt-data check:
+
+1. In browser DevTools, set `qq-status-pixel-home:v1` to invalid JSON.
+2. Refresh the app.
+3. Confirm the app does not crash and returns to the empty state.
 
 ## Known Limitations To Mention In Demos
 

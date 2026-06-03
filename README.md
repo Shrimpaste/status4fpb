@@ -36,6 +36,16 @@ The current app is a manual local web UI. All member names, notes, and statuses 
 - No real-time countdown refresh. Expiration is reflected when the app renders again, such as after refresh or another state change.
 - `今天结束前` uses the user's current browser local timezone.
 
+## Local Data
+
+MVP data is stored in this browser `localStorage` key:
+
+```text
+qq-status-pixel-home:v1
+```
+
+Use `重置家园` inside the app to clear it. This only clears status4fpb data in the current browser and does not affect any QQ data. You can also remove the key from browser DevTools under Application/Storage -> Local Storage.
+
 ## Run Locally
 
 ```bash
@@ -66,10 +76,15 @@ Short version:
 5. Refresh and confirm the member, status, note, and expiration are restored.
 6. Delete the member or reset the home and confirm the empty state returns.
 
+## Development Continuity
+
+This project uses a long-running Codex implementation + ChatGPT web review loop. If context is compacted or the thread is resumed later, start from [docs/continuity.md](docs/continuity.md) to recover the persistent task rules, product boundaries, review loop, and roadmap.
+
 ## Project Docs
 
 - Product boundary: [docs/product-design.md](docs/product-design.md)
 - Technical plan: [docs/technical-plan.md](docs/technical-plan.md)
 - Review checklist: [docs/review-checklist.md](docs/review-checklist.md)
+- Continuity notes: [docs/continuity.md](docs/continuity.md)
 - MVP acceptance: [docs/mvp-acceptance.md](docs/mvp-acceptance.md)
 - Superpowers spec: [docs/superpowers/specs/2026-06-03-qq-status-pixel-home-design.md](docs/superpowers/specs/2026-06-03-qq-status-pixel-home-design.md)

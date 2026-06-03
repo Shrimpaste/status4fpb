@@ -218,7 +218,7 @@ describe('App', () => {
     expect(window.localStorage.getItem(STORAGE_KEY)).not.toBeNull()
     expect(
       screen.getByRole('button', { name: '确认重置家园' }),
-    ).toBeInTheDocument()
+    ).toHaveTextContent('确认重置家园')
 
     fireEvent.click(screen.getByRole('button', { name: '确认重置家园' }))
 

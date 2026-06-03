@@ -83,7 +83,7 @@ function App() {
           onClick={handleResetClick}
           aria-label={pendingReset ? '确认重置家园' : '重置家园'}
         >
-          {pendingReset ? '确认重置' : '重置家园'}
+          {pendingReset ? '确认重置家园' : '重置家园'}
         </button>
       </section>
 
