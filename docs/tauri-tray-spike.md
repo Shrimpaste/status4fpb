@@ -102,6 +102,12 @@ Rust tray construction compiled and the app launched with the tray code enabled.
 
 Visual tray icon presence and menu click behavior were not fully hand-tested in this run because the Windows Computer Use helper was unavailable. This remains the main manual validation gap before treating the tray interaction as product-ready.
 
+Manual tray verification is tracked in [tauri-tray-manual-checklist.md](tauri-tray-manual-checklist.md). Current status:
+
+- Verified: Tauri app starts, the desktop window appears, WebView2 starts, and the Rust tray code compiles and loads during app startup.
+- Not verified: a human or automation helper can see the tray icon, open the tray menu, click `打开家园`, click `隐藏窗口`, and click `退出`.
+- Blocker: the Windows Computer Use helper currently reports `Computer Use native pipe path is unavailable`.
+
 ## Local Storage Observation
 
 The Tauri WebView process launched with a user data directory under:
