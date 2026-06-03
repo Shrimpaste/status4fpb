@@ -161,4 +161,70 @@ describe('shared state adapter', () => {
 
     expect(JSON.stringify(display)).not.toContain('secret_1')
   })
+
+  it('does not display statuses when server time is invalid', () => {
+    const display = adaptSharedTownStateForDisplay(
+      createSharedState({ serverTime: 'not-a-date' }),
+    )
+
+    expect(display.statuses).toEqual({})
+  })
+
+  it('filters status with invalid expiration time', () => {
+    const display = adaptSharedTownStateForDisplay(
+      createSharedState({
+        statuses: {
+          member_1: {
+            roomId: 'room_1',
+            memberId: 'member_1',
+            statusKey: 'exam_paper',
+            startedAt: '2026-06-03T11:30:00.000Z',
+            expiresAt: 'bad-expires-at',
+            updatedAt: '2026-06-03T11:30:00.000Z',
+            source: 'desktop_manual',
+          },
+        },
+      }),
+    )
+
+    expect(display.statuses.member_1).toBeUndefined()
+  })
+
+  it('filters unknown status key forced through runtime input', () => {
+    const display = adaptSharedTownStateForDisplay(
+      createSharedState({
+        statuses: {
+          member_1: {
+            roomId: 'room_1',
+            memberId: 'member_1',
+            statusKey: 'unknown',
+            startedAt: '2026-06-03T11:30:00.000Z',
+            updatedAt: '2026-06-03T11:30:00.000Z',
+            source: 'desktop_manual',
+          } as never,
+        },
+      }),
+    )
+
+    expect(display.statuses.member_1).toBeUndefined()
+  })
+
+  it('filters status for a member with invalid dates', () => {
+    const display = adaptSharedTownStateForDisplay(
+      createSharedState({
+        members: [
+          {
+            roomId: 'room_1',
+            memberId: 'member_1',
+            displayName: 'Bei',
+            avatarKey: 'orange',
+            createdAt: '2026-06-03T11:00:00.000Z',
+            updatedAt: 'bad-updated-at',
+          },
+        ],
+      }),
+    )
+
+    expect(display.statuses.member_1).toBeUndefined()
+  })
 })
