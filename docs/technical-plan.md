@@ -28,7 +28,9 @@
 5. Member deletion with two-click confirmation.
 6. UI component split for maintainability.
 7. Status notes and preset expirations.
-8. Browser smoke checks and ChatGPT web review after implementation rounds.
+8. MVP documentation and acceptance checklist.
+9. Local home reset for release hardening.
+10. Browser smoke checks and ChatGPT web review after implementation rounds.
 
 ## Privacy Rules
 

@@ -35,6 +35,16 @@ Expected result: all commands pass without errors.
 17. Confirm the empty pixel home returns.
 18. Refresh again and confirm the member stays deleted.
 
+## Reset Home Check
+
+1. Add a member named `南南`.
+2. Set any status.
+3. Click `重置家园`.
+4. Confirm the member remains visible and the button changes to `确认重置`.
+5. Click `确认重置家园`.
+6. Confirm the empty pixel home returns.
+7. Refresh and confirm the home remains empty.
+
 ## Expiration Fallback Check
 
 Automated tests cover this path directly. Manual verification is optional until a time-control UI exists.

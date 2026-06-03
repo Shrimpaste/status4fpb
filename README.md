@@ -10,6 +10,7 @@ QQ群友状态家园：一个本地优先的趣味状态板，用像素小镇展
 - Pick a preset expiration: `不过期`, `30 分钟`, `1 小时`, `2 小时`, or `今天结束前`.
 - Fall back to `失联中` after a status expires.
 - Delete members with a two-click confirmation.
+- Reset the whole local pixel home with a two-click confirmation.
 - Persist all MVP data in browser `localStorage`.
 - Recover safely from corrupt or invalid stored data.
 
@@ -63,7 +64,7 @@ Short version:
 3. Add a note.
 4. Select `1 小时`.
 5. Refresh and confirm the member, status, note, and expiration are restored.
-6. Delete the member and confirm the empty state returns.
+6. Delete the member or reset the home and confirm the empty state returns.
 
 ## Project Docs
 

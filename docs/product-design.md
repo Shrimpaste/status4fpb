@@ -15,6 +15,7 @@ This app is a fun QQ group friend status display, not a QQ automation client. Th
 - Use `失联中` as the expired fallback by default.
 - Persist local data in the browser.
 - Let users delete members with a confirmation step.
+- Let users reset the whole local home with a confirmation step.
 
 ## Visual Feel
 

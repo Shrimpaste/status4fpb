@@ -205,4 +205,25 @@ describe('App', () => {
     expect(screen.getByLabelText('成员 北北')).toBeInTheDocument()
     expect(screen.getByLabelText('成员 南南')).toBeInTheDocument()
   })
+
+  it('resets all local data only after confirmation', () => {
+    render(<App />)
+
+    addMemberThroughUi()
+    fireEvent.click(screen.getByRole('button', { name: '设置北北为套卷中' }))
+
+    fireEvent.click(screen.getByRole('button', { name: '重置家园' }))
+
+    expect(screen.getByLabelText('成员 北北')).toBeInTheDocument()
+    expect(window.localStorage.getItem(STORAGE_KEY)).not.toBeNull()
+    expect(
+      screen.getByRole('button', { name: '确认重置家园' }),
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: '确认重置家园' }))
+
+    expect(screen.queryByLabelText('成员 北北')).not.toBeInTheDocument()
+    expect(screen.getByText('还没有群友入住')).toBeInTheDocument()
+    expect(window.localStorage.getItem(STORAGE_KEY)).toBeNull()
+  })
 })

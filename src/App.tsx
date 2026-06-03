@@ -18,17 +18,20 @@ const statuses = Object.values(STATUS_PRESETS)
 
 function App() {
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
+  const [pendingReset, setPendingReset] = useState(false)
   const {
     state,
     addVirtualMember,
     setVirtualMemberStatus,
     removeVirtualMember,
+    resetPixelHome,
     getMemberStatus,
   } = usePixelHomeApp()
 
   function handleAddMember(displayName: string) {
     addVirtualMember(displayName)
     setPendingDeleteId(null)
+    setPendingReset(false)
   }
 
   function handleStatusClick(
@@ -36,10 +39,13 @@ function App() {
     input: SetVirtualMemberStatusInput,
   ) {
     setPendingDeleteId(null)
+    setPendingReset(false)
     setVirtualMemberStatus(memberId, input)
   }
 
   function handleDeleteClick(memberId: string) {
+    setPendingReset(false)
+
     if (pendingDeleteId === memberId) {
       removeVirtualMember(memberId)
       setPendingDeleteId(null)
@@ -47,6 +53,18 @@ function App() {
     }
 
     setPendingDeleteId(memberId)
+  }
+
+  function handleResetClick() {
+    setPendingDeleteId(null)
+
+    if (pendingReset) {
+      resetPixelHome()
+      setPendingReset(false)
+      return
+    }
+
+    setPendingReset(true)
   }
 
   return (
@@ -59,6 +77,14 @@ function App() {
         </p>
         <AddMemberForm onAddMember={handleAddMember} />
         <span className="privacy-note">MVP 不接入 QQ 私有接口</span>
+        <button
+          type="button"
+          className="reset-action"
+          onClick={handleResetClick}
+          aria-label={pendingReset ? '确认重置家园' : '重置家园'}
+        >
+          {pendingReset ? '确认重置' : '重置家园'}
+        </button>
       </section>
 
       <PixelHomeMap

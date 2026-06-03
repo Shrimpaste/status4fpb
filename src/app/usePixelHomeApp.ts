@@ -1,5 +1,10 @@
 import { useMemo, useState } from 'react'
-import { addMember, removeMember, setMemberStatus } from '../domain/appState'
+import {
+  addMember,
+  createEmptyAppState,
+  removeMember,
+  setMemberStatus,
+} from '../domain/appState'
 import {
   computeExpiresAt,
   type ExpirationPresetKey,
@@ -30,6 +35,7 @@ export type PixelHomeApp = {
     input: SetVirtualMemberStatusInput,
   ) => void
   removeVirtualMember: (memberId: string) => void
+  resetPixelHome: () => void
   getMemberStatus: (memberId: string) => EffectiveStatus
 }
 
@@ -97,6 +103,11 @@ export function usePixelHomeApp(): PixelHomeApp {
     commit((current) => removeMember(current, memberId))
   }
 
+  function resetPixelHome() {
+    store.clear()
+    setState(createEmptyAppState())
+  }
+
   function getMemberStatus(memberId: Member['id']) {
     return getEffectiveStatus(memberId, state.statuses, new Date().toISOString(), {
       expiredFallback: state.settings.expiredFallback,
@@ -108,6 +119,7 @@ export function usePixelHomeApp(): PixelHomeApp {
     addVirtualMember,
     setVirtualMemberStatus,
     removeVirtualMember,
+    resetPixelHome,
     getMemberStatus,
   }
 }
