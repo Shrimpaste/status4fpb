@@ -40,7 +40,10 @@ export function PixelHomeMap({ members, getMemberStatus }: PixelHomeMapProps) {
     <section className="pixel-home" aria-label="像素家园预览">
       <div className="town-map">
         {members.length === 0 ? (
-          <p className="empty-home">还没有群友入住</p>
+          <div className="empty-home" role="note">
+            <p>还没有群友入住</p>
+            <p>添加群友后，小人会根据状态进入不同区域</p>
+          </div>
         ) : null}
 
         <div className="town-grid">

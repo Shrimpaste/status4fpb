@@ -33,7 +33,12 @@ export function TownZone({ zone, residents }: TownZoneProps) {
           <span className="town-zone-empty">空</span>
         ) : (
           residents.map(({ member, status }) => (
-            <MemberMarker key={member.id} member={member} status={status} />
+            <MemberMarker
+              key={member.id}
+              member={member}
+              status={status}
+              zoneLabel={zone.label}
+            />
           ))
         )}
       </div>

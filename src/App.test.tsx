@@ -65,7 +65,7 @@ describe('App', () => {
     expect(within(memberCard).getByText('当前：套卷中')).toBeInTheDocument()
     const studyZone = screen.getByRole('region', { name: '状态区域 自习塔' })
     expect(
-      within(studyZone).getByLabelText('成员 北北 当前 套卷中'),
+      within(studyZone).getByLabelText('成员 北北 当前 套卷中，位于 自习塔'),
     ).toBeInTheDocument()
 
     let saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '{}')
@@ -78,10 +78,12 @@ describe('App', () => {
       name: '状态区域 魔法研究所',
     })
     expect(
-      within(scopeZone).getByLabelText('成员 北北 当前 缩圈中'),
+      within(scopeZone).getByLabelText(
+        '成员 北北 当前 缩圈中，位于 魔法研究所',
+      ),
     ).toBeInTheDocument()
     expect(
-      within(studyZone).queryByLabelText('成员 北北 当前 套卷中'),
+      within(studyZone).queryByLabelText('成员 北北 当前 套卷中，位于 自习塔'),
     ).toBeNull()
     saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '{}')
     expect(saved.statuses[saved.members[0].id].statusKey).toBe(
@@ -202,7 +204,7 @@ describe('App', () => {
     expect(within(memberCard).queryByText(/^有效期至：/)).toBeNull()
     const mistZone = screen.getByRole('region', { name: '状态区域 雾林' })
     expect(
-      within(mistZone).getByLabelText('成员 北北 当前 失联中'),
+      within(mistZone).getByLabelText('成员 北北 当前 失联中，位于 雾林'),
     ).toBeInTheDocument()
   })
 

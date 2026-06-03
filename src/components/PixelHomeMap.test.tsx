@@ -50,6 +50,9 @@ describe('PixelHomeMap', () => {
     )
 
     expect(screen.getByText('还没有群友入住')).toBeInTheDocument()
+    expect(
+      screen.getByText('添加群友后，小人会根据状态进入不同区域'),
+    ).toBeInTheDocument()
 
     for (const label of [
       '自习塔',
@@ -76,8 +79,29 @@ describe('PixelHomeMap', () => {
 
     const zone = screen.getByRole('region', { name: '状态区域 自习塔' })
     expect(
-      within(zone).getByLabelText('成员 北北 当前 套卷中'),
+      within(zone).getByLabelText('成员 北北 当前 套卷中，位于 自习塔'),
     ).toBeInTheDocument()
+  })
+
+  it('renders multiple members in the same town zone', () => {
+    const members = [createMember('m1', '北北'), createMember('m2', '南南')]
+
+    render(
+      <PixelHomeMap
+        members={members}
+        getMemberStatus={(memberId) => createStatus(memberId, 'exam_paper')}
+      />,
+    )
+
+    const zone = screen.getByRole('region', { name: '状态区域 自习塔' })
+
+    expect(
+      within(zone).getByLabelText('成员 北北 当前 套卷中，位于 自习塔'),
+    ).toBeInTheDocument()
+    expect(
+      within(zone).getByLabelText('成员 南南 当前 套卷中，位于 自习塔'),
+    ).toBeInTheDocument()
+    expect(within(zone).queryByText('空')).not.toBeInTheDocument()
   })
 
   it('places a scope-shrinking member in the Scope Lab zone', () => {
@@ -85,7 +109,7 @@ describe('PixelHomeMap', () => {
 
     const zone = screen.getByRole('region', { name: '状态区域 魔法研究所' })
     expect(
-      within(zone).getByLabelText('成员 北北 当前 缩圈中'),
+      within(zone).getByLabelText('成员 北北 当前 缩圈中，位于 魔法研究所'),
     ).toBeInTheDocument()
   })
 
@@ -94,7 +118,7 @@ describe('PixelHomeMap', () => {
 
     const zone = screen.getByRole('region', { name: '状态区域 雾林' })
     expect(
-      within(zone).getByLabelText('成员 北北 当前 失联中'),
+      within(zone).getByLabelText('成员 北北 当前 失联中，位于 雾林'),
     ).toBeInTheDocument()
   })
 
@@ -103,7 +127,7 @@ describe('PixelHomeMap', () => {
 
     const zone = screen.getByRole('region', { name: '状态区域 问号路牌' })
     expect(
-      within(zone).getByLabelText('成员 北北 当前 未知'),
+      within(zone).getByLabelText('成员 北北 当前 未知，位于 问号路牌'),
     ).toBeInTheDocument()
   })
 })
