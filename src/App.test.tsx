@@ -63,6 +63,10 @@ describe('App', () => {
 
     const memberCard = screen.getByLabelText('成员 北北')
     expect(within(memberCard).getByText('当前：套卷中')).toBeInTheDocument()
+    const studyZone = screen.getByRole('region', { name: '状态区域 自习塔' })
+    expect(
+      within(studyZone).getByLabelText('成员 北北 当前 套卷中'),
+    ).toBeInTheDocument()
 
     let saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '{}')
     expect(saved.statuses[saved.members[0].id].statusKey).toBe('exam_paper')
@@ -70,6 +74,15 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', { name: '设置北北为缩圈中' }))
 
     expect(within(memberCard).getByText('当前：缩圈中')).toBeInTheDocument()
+    const scopeZone = screen.getByRole('region', {
+      name: '状态区域 魔法研究所',
+    })
+    expect(
+      within(scopeZone).getByLabelText('成员 北北 当前 缩圈中'),
+    ).toBeInTheDocument()
+    expect(
+      within(studyZone).queryByLabelText('成员 北北 当前 套卷中'),
+    ).toBeNull()
     saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '{}')
     expect(saved.statuses[saved.members[0].id].statusKey).toBe(
       'scope_shrinking',
@@ -187,6 +200,10 @@ describe('App', () => {
     expect(within(memberCard).getByText('当前：失联中')).toBeInTheDocument()
     expect(within(memberCard).queryByText('备注：第二套卷')).toBeNull()
     expect(within(memberCard).queryByText(/^有效期至：/)).toBeNull()
+    const mistZone = screen.getByRole('region', { name: '状态区域 雾林' })
+    expect(
+      within(mistZone).getByLabelText('成员 北北 当前 失联中'),
+    ).toBeInTheDocument()
   })
 
   it('clears pending delete confirmation when adding a member', () => {
