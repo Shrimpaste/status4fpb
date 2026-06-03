@@ -34,6 +34,7 @@ export type StatusPreset = {
   statusKey: StatusKey
   label: string
   place: string
+  placeLabel: string
   description: string
   selectable: boolean
 }

@@ -1,19 +1,96 @@
-import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { fireEvent, render, screen, within } from '@testing-library/react'
+import { beforeEach, describe, expect, it } from 'vitest'
 import App from './App'
+import { addMember, createEmptyAppState, setMemberStatus } from './domain/appState'
+import { STORAGE_KEY } from './storage/localStorageStore'
+
+const NOW = '2026-06-03T12:00:00.000Z'
+
+function addMemberThroughUi(displayName = '北北') {
+  fireEvent.change(screen.getByLabelText('群友昵称'), {
+    target: { value: displayName },
+  })
+  fireEvent.click(screen.getByRole('button', { name: '添加群友' }))
+}
 
 describe('App', () => {
-  it('presents the MVP pixel status home shell', () => {
+  beforeEach(() => {
+    window.localStorage.clear()
+  })
+
+  it('shows an empty status home with an active add form', () => {
     render(<App />)
 
     expect(
       screen.getByRole('heading', { name: 'QQ群友状态家园' }),
     ).toBeInTheDocument()
-    expect(screen.getAllByText('套卷中').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('缩圈中').length).toBeGreaterThan(0)
-    expect(
-      screen.getByRole('button', { name: '添加群友' }),
-    ).toBeDisabled()
-    expect(screen.getByLabelText('像素家园预览')).toBeInTheDocument()
+    expect(screen.getByLabelText('群友昵称')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '添加群友' })).toBeEnabled()
+    expect(screen.getByText('还没有群友入住')).toBeInTheDocument()
+    expect(screen.getByText('自习桌')).toBeInTheDocument()
+    expect(screen.queryByText('study_desk')).not.toBeInTheDocument()
+  })
+
+  it('adds a member and persists it locally', () => {
+    render(<App />)
+
+    addMemberThroughUi()
+
+    expect(screen.getByLabelText('成员 北北')).toBeInTheDocument()
+    const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '{}')
+    expect(saved.members[0].displayName).toBe('北北')
+  })
+
+  it('ignores blank names and trims saved display names', () => {
+    render(<App />)
+
+    addMemberThroughUi('   ')
+
+    expect(screen.queryByLabelText('成员')).not.toBeInTheDocument()
+    expect(window.localStorage.getItem(STORAGE_KEY)).toBeNull()
+
+    addMemberThroughUi('  北北  ')
+
+    const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '{}')
+    expect(saved.members[0].displayName).toBe('北北')
+  })
+
+  it('sets required statuses and persists the latest status', () => {
+    render(<App />)
+
+    addMemberThroughUi()
+    fireEvent.click(screen.getByRole('button', { name: '设置北北为套卷中' }))
+
+    const memberCard = screen.getByLabelText('成员 北北')
+    expect(within(memberCard).getByText('当前：套卷中')).toBeInTheDocument()
+
+    let saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '{}')
+    expect(saved.statuses[saved.members[0].id].statusKey).toBe('exam_paper')
+
+    fireEvent.click(screen.getByRole('button', { name: '设置北北为缩圈中' }))
+
+    expect(within(memberCard).getByText('当前：缩圈中')).toBeInTheDocument()
+    saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '{}')
+    expect(saved.statuses[saved.members[0].id].statusKey).toBe(
+      'scope_shrinking',
+    )
+  })
+
+  it('renders persisted members and statuses on startup', () => {
+    const state = setMemberStatus(
+      addMember(
+        createEmptyAppState(),
+        { id: 'm1', displayName: '北北', avatarKey: 'orange' },
+        NOW,
+      ),
+      { memberId: 'm1', statusKey: 'scope_shrinking' },
+      NOW,
+    )
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+
+    render(<App />)
+
+    const memberCard = screen.getByLabelText('成员 北北')
+    expect(within(memberCard).getByText('当前：缩圈中')).toBeInTheDocument()
   })
 })
