@@ -3,6 +3,7 @@ import type {
   SharedStatusSource,
   SharedTownState,
 } from './types'
+import { filterDisplayableSharedStatuses } from './sharedStateValidation'
 
 export type SharedTownDisplayMember = {
   memberId: string
@@ -34,14 +35,7 @@ export type SharedTownDisplayState = {
 export function adaptSharedTownStateForDisplay(
   state: SharedTownState,
 ): SharedTownDisplayState {
-  const memberById = new Map(
-    state.members.map((member) => [member.memberId, member]),
-  )
-  const activeMemberIds = new Set(
-    state.members
-      .filter((member) => !member.leftAt)
-      .map((member) => member.memberId),
-  )
+  const displayableStatuses = filterDisplayableSharedStatuses(state)
 
   return {
     roomId: state.room.roomId,
@@ -55,16 +49,7 @@ export function adaptSharedTownStateForDisplay(
       ...(member.leftAt ? { leftAt: member.leftAt } : {}),
     })),
     statuses: Object.fromEntries(
-      Object.entries(state.statuses)
-        .filter(([memberId, status]) => {
-          const member = memberById.get(memberId)
-
-          return Boolean(
-            member &&
-              activeMemberIds.has(memberId) &&
-              status.memberId === memberId,
-          )
-        })
+      Object.entries(displayableStatuses)
         .map(([memberId, status]) => [
           memberId,
           {
