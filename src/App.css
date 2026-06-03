@@ -5,6 +5,7 @@
   grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
   grid-template-areas:
     'intro home'
+    'shared home'
     'dock dock';
   gap: 24px;
   box-sizing: border-box;
@@ -94,6 +95,99 @@
 .reset-action:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 4px;
+}
+
+.shared-demo-panel {
+  grid-area: shared;
+  min-width: 0;
+  padding: 24px;
+  display: grid;
+  gap: 18px;
+  align-content: start;
+  background: #f4f0e6;
+  border: 3px solid var(--ink);
+  box-shadow: 8px 8px 0 var(--shadow-color);
+}
+
+.shared-demo-heading {
+  display: grid;
+  gap: 8px;
+}
+
+.shared-demo-heading h2 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+
+.shared-demo-warning,
+.shared-demo-empty,
+.shared-demo-error,
+.shared-demo-room-meta p {
+  margin: 0;
+}
+
+.shared-demo-warning {
+  width: fit-content;
+  max-width: 100%;
+  padding: 6px 10px;
+  background: #b8e6dd;
+  border: 3px solid var(--ink);
+  font-weight: 900;
+}
+
+.shared-demo-actions,
+.shared-demo-join {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+}
+
+.shared-demo-room {
+  display: grid;
+  gap: 14px;
+}
+
+.shared-demo-room-meta {
+  display: grid;
+  gap: 6px;
+  font-weight: 900;
+}
+
+.shared-demo-join .status-field {
+  flex: 1 1 180px;
+}
+
+.shared-demo-error {
+  padding: 8px 10px;
+  background: #ffd0bf;
+  border: 3px solid var(--ink);
+  font-weight: 900;
+}
+
+.shared-demo-members {
+  display: grid;
+  gap: 12px;
+}
+
+.shared-demo-member {
+  min-width: 0;
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+  background: var(--panel);
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 rgba(28, 33, 40, 0.18);
+}
+
+.shared-demo-member h3 {
+  margin: 4px 0 8px;
+  overflow-wrap: anywhere;
+}
+
+.shared-demo-empty {
+  color: var(--muted);
+  font-weight: 900;
 }
 
 .reset-action {
@@ -410,12 +504,14 @@
     grid-template-areas:
       'intro'
       'home'
+      'shared'
       'dock';
     padding: 18px;
   }
 
   .intro-panel,
   .pixel-home,
+  .shared-demo-panel,
   .status-card {
     box-shadow: 5px 5px 0 var(--shadow-color);
   }
