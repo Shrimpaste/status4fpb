@@ -39,6 +39,7 @@ describe('shared sync no-network guard', () => {
     const sourceFiles = collectSourceFiles(sharedSyncDirectory)
 
     expect(sourceFiles.map((file) => basename(file)).sort()).toEqual([
+      'inviteLink.ts',
       'localMockSyncClient.ts',
       'localSharedTownSession.ts',
       'sharedCredentialStore.ts',
