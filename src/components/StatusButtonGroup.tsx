@@ -29,7 +29,8 @@ export function StatusButtonGroup({
           onClick={() => onSelectStatus(preset.statusKey)}
           aria-label={`设置${displayName}为${preset.label}`}
         >
-          {preset.label}
+          <span className="status-action-label">{preset.label}</span>
+          <span className="status-action-place">{preset.placeLabel}</span>
         </button>
       ))}
     </div>

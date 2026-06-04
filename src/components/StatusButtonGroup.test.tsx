@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { STATUS_PRESETS } from '../data/statusPresets'
 import { StatusButtonGroup } from './StatusButtonGroup'
@@ -20,6 +20,23 @@ describe('StatusButtonGroup', () => {
       screen.getByRole('button', { name: '设置北北为缩圈中' }),
     ).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: '设置北北为未知' })).toBeNull()
+  })
+
+  it('shows each selectable status place inside the button', () => {
+    render(
+      <StatusButtonGroup
+        displayName="北北"
+        statuses={Object.values(STATUS_PRESETS)}
+        onSelectStatus={vi.fn()}
+      />,
+    )
+
+    const examButton = screen.getByRole('button', { name: '设置北北为套卷中' })
+    const scopeButton = screen.getByRole('button', { name: '设置北北为缩圈中' })
+
+    expect(within(examButton).getByText('自习桌')).toBeInTheDocument()
+    expect(within(scopeButton).getByText('缩圈法阵')).toBeInTheDocument()
+    expect(screen.queryByText('未知区')).toBeNull()
   })
 
   it('passes the selected status key to the callback', () => {
