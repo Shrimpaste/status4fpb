@@ -74,12 +74,33 @@ describe('PixelHomeMap', () => {
     expect(screen.queryByText('scope_lab')).not.toBeInTheDocument()
   })
 
+  it('summarizes resident count and active town zones', () => {
+    const members = [createMember('m1', '北北'), createMember('m2', '南南')]
+
+    render(
+      <PixelHomeMap
+        members={members}
+        getMemberStatus={(memberId) =>
+          createStatus(
+            memberId,
+            memberId === 'm1' ? 'exam_paper' : 'scope_shrinking',
+          )
+        }
+      />,
+    )
+
+    expect(screen.getByText('2 位群友入住')).toBeInTheDocument()
+    expect(screen.getByText('2 个区域亮起')).toBeInTheDocument()
+  })
+
   it('places an exam-paper member in the Study Tower zone', () => {
     renderMap('exam_paper')
 
     const zone = screen.getByRole('region', { name: '状态区域 自习塔' })
     expect(
-      within(zone).getByLabelText('成员 北北 当前 套卷中，位于 自习塔'),
+      within(zone).getByLabelText(
+        '成员 北北 当前 套卷中，位于 自习塔，正在刷卷堆塔',
+      ),
     ).toBeInTheDocument()
   })
 
@@ -96,10 +117,14 @@ describe('PixelHomeMap', () => {
     const zone = screen.getByRole('region', { name: '状态区域 自习塔' })
 
     expect(
-      within(zone).getByLabelText('成员 北北 当前 套卷中，位于 自习塔'),
+      within(zone).getByLabelText(
+        '成员 北北 当前 套卷中，位于 自习塔，正在刷卷堆塔',
+      ),
     ).toBeInTheDocument()
     expect(
-      within(zone).getByLabelText('成员 南南 当前 套卷中，位于 自习塔'),
+      within(zone).getByLabelText(
+        '成员 南南 当前 套卷中，位于 自习塔，正在刷卷堆塔',
+      ),
     ).toBeInTheDocument()
     expect(within(zone).queryByText('空')).not.toBeInTheDocument()
   })
@@ -109,7 +134,9 @@ describe('PixelHomeMap', () => {
 
     const zone = screen.getByRole('region', { name: '状态区域 魔法研究所' })
     expect(
-      within(zone).getByLabelText('成员 北北 当前 缩圈中，位于 魔法研究所'),
+      within(zone).getByLabelText(
+        '成员 北北 当前 缩圈中，位于 魔法研究所，正在缩圈画阵',
+      ),
     ).toBeInTheDocument()
   })
 
@@ -118,7 +145,9 @@ describe('PixelHomeMap', () => {
 
     const zone = screen.getByRole('region', { name: '状态区域 雾林' })
     expect(
-      within(zone).getByLabelText('成员 北北 当前 失联中，位于 雾林'),
+      within(zone).getByLabelText(
+        '成员 北北 当前 失联中，位于 雾林，正在雾里失联',
+      ),
     ).toBeInTheDocument()
   })
 
@@ -127,7 +156,9 @@ describe('PixelHomeMap', () => {
 
     const zone = screen.getByRole('region', { name: '状态区域 问号路牌' })
     expect(
-      within(zone).getByLabelText('成员 北北 当前 未知，位于 问号路牌'),
+      within(zone).getByLabelText(
+        '成员 北北 当前 未知，位于 问号路牌，正在路牌待机',
+      ),
     ).toBeInTheDocument()
   })
 })

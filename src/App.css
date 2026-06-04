@@ -289,6 +289,23 @@
   border: 3px solid rgba(28, 33, 40, 0.9);
 }
 
+.town-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.town-summary span {
+  width: fit-content;
+  max-width: 100%;
+  padding: 6px 10px;
+  background: #fffaf0;
+  border: 3px solid var(--ink);
+  box-shadow: 3px 3px 0 rgba(28, 33, 40, 0.18);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
 .town-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(126px, 1fr));
@@ -388,6 +405,16 @@
 .member-marker strong {
   max-width: 6rem;
   overflow-wrap: anywhere;
+}
+
+.member-vignette {
+  max-width: 7rem;
+  padding: 3px 6px;
+  overflow-wrap: anywhere;
+  background: #ffd166;
+  border: 2px solid var(--ink);
+  font-size: 0.68rem;
+  line-height: 1.1;
 }
 
 .mini-sprite {
