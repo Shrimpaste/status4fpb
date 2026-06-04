@@ -559,6 +559,17 @@
   filter: grayscale(30%);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .town-zone,
+  .town-zone::before,
+  .town-zone-icon,
+  .member-marker,
+  .visual-element {
+    animation: none;
+    transition: none;
+  }
+}
+
 .mini-sprite {
   width: 30px;
   height: 38px;
