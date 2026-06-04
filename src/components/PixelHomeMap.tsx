@@ -35,10 +35,18 @@ function groupResidentsByZone(
 
 export function PixelHomeMap({ members, getMemberStatus }: PixelHomeMapProps) {
   const residentsByZone = groupResidentsByZone(members, getMemberStatus)
+  const activeZoneCount = Array.from(residentsByZone.values()).filter(
+    (residents) => residents.length > 0,
+  ).length
 
   return (
     <section className="pixel-home" aria-label="像素家园预览">
       <div className="town-map">
+        <div className="town-summary" aria-label="小镇状态摘要">
+          <span>{members.length} 位群友入住</span>
+          <span>{activeZoneCount} 个区域亮起</span>
+        </div>
+
         {members.length === 0 ? (
           <div className="empty-home" role="note">
             <p>还没有群友入住</p>
