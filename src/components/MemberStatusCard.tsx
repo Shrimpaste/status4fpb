@@ -64,6 +64,9 @@ export function MemberStatusCard({
       <p className="status-place">{status.placeLabel}</p>
       <h2>{member.displayName}</h2>
       <p className="current-status">当前：{status.label}</p>
+      <p className={`status-source ${status.source}`}>
+        {getStatusSourceLabel(status.source)}
+      </p>
       {currentNote ? <p className="status-note">备注：{currentNote}</p> : null}
       {currentExpiresAt ? (
         <p className="status-expiry">
@@ -126,4 +129,16 @@ export function MemberStatusCard({
 
 function formatExpiresAt(expiresAt: string): string {
   return expiresAt.slice(0, 16).replace('T', ' ')
+}
+
+function getStatusSourceLabel(source: EffectiveStatus['source']) {
+  if (source === 'current') {
+    return '手动状态'
+  }
+
+  if (source === 'expired_fallback') {
+    return '过期兜底'
+  }
+
+  return '未设置'
 }
