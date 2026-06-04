@@ -351,9 +351,29 @@
   gap: 8px;
 }
 
+.town-zone-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.town-zone-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
 .town-zone-header h2 {
   margin: 0;
   font-size: 1rem;
+}
+
+.town-zone-count {
+  padding: 2px 6px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  font-size: 0.68rem;
+  font-weight: 900;
 }
 
 .town-zone-header p {

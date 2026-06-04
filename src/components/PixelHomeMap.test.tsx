@@ -116,6 +116,7 @@ describe('PixelHomeMap', () => {
 
     const zone = screen.getByRole('region', { name: '状态区域 自习塔' })
 
+    expect(within(zone).getByText('2 人')).toBeInTheDocument()
     expect(
       within(zone).getByLabelText(
         '成员 北北 当前 套卷中，位于 自习塔，正在刷卷堆塔',

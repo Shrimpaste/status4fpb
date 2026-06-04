@@ -22,8 +22,11 @@ export function TownZone({ zone, residents }: TownZoneProps) {
         <span className="town-zone-icon" aria-hidden="true">
           {zone.icon}
         </span>
-        <div>
-          <h2>{zone.label}</h2>
+        <div className="town-zone-copy">
+          <div className="town-zone-title">
+            <h2>{zone.label}</h2>
+            <span className="town-zone-count">{residents.length} 人</span>
+          </div>
           <p>{zone.description}</p>
         </div>
       </header>
