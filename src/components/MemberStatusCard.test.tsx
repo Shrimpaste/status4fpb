@@ -34,6 +34,7 @@ describe('MemberStatusCard', () => {
 
     const card = screen.getByLabelText('成员 北北')
     expect(within(card).getByText('当前：套卷中')).toBeInTheDocument()
+    expect(within(card).getByText('正在和试卷搏斗')).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: '设置北北为缩圈中' }))
 

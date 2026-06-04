@@ -67,6 +67,7 @@ export function MemberStatusCard({
       <p className={`status-source ${status.source}`}>
         {getStatusSourceLabel(status.source)}
       </p>
+      <p className="status-description">{status.description}</p>
       {currentNote ? <p className="status-note">备注：{currentNote}</p> : null}
       {currentExpiresAt ? (
         <p className="status-expiry">
