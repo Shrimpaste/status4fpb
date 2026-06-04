@@ -343,6 +343,36 @@
   background: rgba(255, 250, 240, 0.82);
   border: 3px solid var(--ink);
   box-shadow: 4px 4px 0 rgba(28, 33, 40, 0.18);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.town-zone::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.1) 50%, transparent 60%);
+  background-size: 200% 200%;
+  animation: shimmer 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% -200%;
+  }
+  100% {
+    background-position: 200% 200%;
+  }
+}
+
+.town-zone:hover {
+  transform: translateY(-2px);
+  box-shadow: 5px 6px 0 rgba(28, 33, 40, 0.22);
 }
 
 .town-zone-header {
@@ -391,6 +421,11 @@
   background: var(--paper);
   border: 3px solid var(--ink);
   font-weight: 900;
+  transition: transform 0.3s ease;
+}
+
+.town-zone:hover .town-zone-icon {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .town-residents {
@@ -420,6 +455,13 @@
   box-shadow: 3px 3px 0 rgba(28, 33, 40, 0.2);
   font-size: 0.82rem;
   font-weight: 900;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.member-marker:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 5px 0 rgba(28, 33, 40, 0.25);
 }
 
 .member-marker strong {
@@ -435,6 +477,97 @@
   border: 2px solid var(--ink);
   font-size: 0.68rem;
   line-height: 1.1;
+}
+
+.member-visual-elements {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: flex;
+  gap: 2px;
+  font-size: 0.7rem;
+  pointer-events: none;
+}
+
+.visual-element {
+  display: inline-block;
+  animation: float 3s ease-in-out infinite;
+}
+
+.visual-element.element-0 {
+  animation-delay: 0s;
+}
+
+.visual-element.element-1 {
+  animation-delay: 0.5s;
+}
+
+.visual-element.element-2 {
+  animation-delay: 1s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* Status-specific visual effects */
+.status-exam_paper {
+  background: linear-gradient(135deg, #fff0b8 0%, #fffaf0 100%);
+}
+
+.status-scope_shrinking {
+  background: linear-gradient(135deg, #d9c8ff 0%, #fffaf0 100%);
+}
+
+.status-fishing {
+  background: linear-gradient(135deg, #b8e6dd 0%, #fffaf0 100%);
+}
+
+.status-vocabulary {
+  background: linear-gradient(135deg, #d8eec2 0%, #fffaf0 100%);
+}
+
+.status-sleeping {
+  background: linear-gradient(135deg, #c8d4f0 0%, #fffaf0 100%);
+}
+
+.status-deadline {
+  background: linear-gradient(135deg, #ffd0bf 0%, #fffaf0 100%);
+}
+
+.status-offline {
+  background: linear-gradient(135deg, #d9d9df 0%, #e8e8e8 100%);
+  opacity: 0.8;
+}
+
+.status-idle {
+  background: linear-gradient(135deg, #ffe4a3 0%, #fffaf0 100%);
+}
+
+.status-unknown {
+  background: linear-gradient(135deg, #f4f0e6 0%, #fffaf0 100%);
+}
+
+/* Expired status fade effect */
+.member-marker.expired {
+  opacity: 0.6;
+  filter: grayscale(30%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .town-zone,
+  .town-zone::before,
+  .town-zone-icon,
+  .member-marker,
+  .visual-element {
+    animation: none;
+    transition: none;
+  }
 }
 
 .mini-sprite {

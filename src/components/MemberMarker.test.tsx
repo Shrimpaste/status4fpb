@@ -41,4 +41,36 @@ describe('MemberMarker', () => {
       ),
     ).toBeInTheDocument()
   })
+
+  it('renders status visual elements as hidden decoration', () => {
+    const { container } = render(
+      <MemberMarker
+        member={member}
+        status={createStatus('deadline', '赶 ddl 中')}
+        zoneLabel="DDL 工坊"
+      />,
+    )
+
+    expect(container.querySelector('.status-deadline')).not.toBeNull()
+    expect(container.querySelector('.member-visual-elements')).toHaveAttribute(
+      'aria-hidden',
+      'true',
+    )
+    expect(screen.getByText('DDL 锻造')).toBeInTheDocument()
+  })
+
+  it('marks expired fallback status visuals as faded', () => {
+    const { container } = render(
+      <MemberMarker
+        member={member}
+        status={{
+          ...createStatus('offline', '失联中'),
+          source: 'expired_fallback',
+        }}
+        zoneLabel="雾林"
+      />,
+    )
+
+    expect(container.querySelector('.member-marker')).toHaveClass('expired')
+  })
 })
