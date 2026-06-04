@@ -1,5 +1,9 @@
 import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+import {
+  createSharedInviteLink,
+  parseSharedInviteLink,
+} from '../shared-sync/inviteLink'
 import { useLocalSharedTownDemo } from './useLocalSharedTownDemo'
 
 describe('useLocalSharedTownDemo', () => {
@@ -149,5 +153,47 @@ describe('useLocalSharedTownDemo', () => {
         statuses: result.current.statuses,
       }),
     ).not.toContain('secret')
+  })
+
+  it('exposes a parser-valid invite code for local demo links', () => {
+    const { result } = renderHook(() => useLocalSharedTownDemo())
+
+    act(() => {
+      result.current.createDemoRoom()
+    })
+
+    expect(result.current.inviteCode).toBe('TOWN-0001')
+
+    const inviteCode = result.current.inviteCode
+
+    if (inviteCode === null) {
+      throw new Error('Expected the local demo room to expose an invite code.')
+    }
+
+    const inviteLink = createSharedInviteLink({
+      inviteCode,
+    })
+
+    expect(inviteLink).toBe('/join?code=TOWN-0001')
+    expect(parseSharedInviteLink(inviteLink)).toEqual({
+      ok: true,
+      inviteCode: 'TOWN-0001',
+    })
+    expect(inviteLink).not.toContain('memberSecret')
+    expect(inviteLink).not.toContain('secret')
+    expect(inviteLink).not.toContain('token')
+    expect(inviteLink).not.toContain('credential')
+    expect(inviteLink).not.toContain('authorization')
+  })
+
+  it('clears the local demo invite code on reset', () => {
+    const { result } = renderHook(() => useLocalSharedTownDemo())
+
+    act(() => {
+      result.current.createDemoRoom()
+      result.current.resetDemo()
+    })
+
+    expect(result.current.inviteCode).toBeNull()
   })
 })

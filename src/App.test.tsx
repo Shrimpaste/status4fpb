@@ -266,6 +266,13 @@ describe('App', () => {
     expect(screen.getByText('房间：共享小镇实验室')).toBeInTheDocument()
   })
 
+  it('renders shared invite portal copy inside the shared town demo section', () => {
+    render(<App />)
+
+    expect(screen.getByRole('heading', { name: '小镇传送门' })).toBeInTheDocument()
+    expect(screen.getByText('本地邀请链接实验')).toBeInTheDocument()
+  })
+
   it('describes the demo as local mock with no network and refresh loss', () => {
     render(<App />)
 
