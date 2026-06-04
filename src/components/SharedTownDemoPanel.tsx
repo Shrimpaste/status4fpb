@@ -1,5 +1,9 @@
 import { useState } from 'react'
 import { useLocalSharedTownDemo } from '../app/useLocalSharedTownDemo'
+import {
+  createSharedInviteLink,
+  parseSharedInviteLink,
+} from '../shared-sync/inviteLink'
 import type { SelectableStatusKey } from '../types/domain'
 
 const demoStatuses: Array<{ statusKey: SelectableStatusKey; label: string }> = [
@@ -7,10 +11,22 @@ const demoStatuses: Array<{ statusKey: SelectableStatusKey; label: string }> = [
   { statusKey: 'scope_shrinking', label: '缩圈中' },
 ]
 
+type InviteLinkErrorReason = Exclude<
+  ReturnType<typeof parseSharedInviteLink>,
+  { ok: true }
+>['reason']
+
 export function SharedTownDemoPanel() {
   const [displayName, setDisplayName] = useState('演示成员')
+  const [generatedInviteLink, setGeneratedInviteLink] = useState<string | null>(
+    null,
+  )
+  const [inviteLinkInput, setInviteLinkInput] = useState('')
+  const [parsedInviteCode, setParsedInviteCode] = useState<string | null>(null)
+  const [inviteLinkError, setInviteLinkError] = useState<string | null>(null)
   const {
     isActive,
+    inviteCode,
     displayState,
     members,
     statuses,
@@ -25,6 +41,35 @@ export function SharedTownDemoPanel() {
   function handleJoinDemoMember() {
     joinDemoMember(displayName)
     setDisplayName('演示成员')
+  }
+
+  function handleGenerateInviteLink() {
+    if (!inviteCode) {
+      return
+    }
+
+    setGeneratedInviteLink(createSharedInviteLink({ inviteCode }))
+  }
+
+  function handleParseInviteLink() {
+    const result = parseSharedInviteLink(inviteLinkInput)
+
+    if (result.ok) {
+      setParsedInviteCode(result.inviteCode)
+      setInviteLinkError(null)
+      return
+    }
+
+    setParsedInviteCode(null)
+    setInviteLinkError(getInviteLinkErrorMessage(result.reason))
+  }
+
+  function handleResetDemo() {
+    resetDemo()
+    setGeneratedInviteLink(null)
+    setInviteLinkInput('')
+    setParsedInviteCode(null)
+    setInviteLinkError(null)
   }
 
   return (
@@ -44,9 +89,66 @@ export function SharedTownDemoPanel() {
           创建共享小镇
         </button>
         {isActive ? (
-          <button type="button" className="reset-action" onClick={resetDemo}>
+          <button type="button" className="reset-action" onClick={handleResetDemo}>
             重置实验
           </button>
+        ) : null}
+      </div>
+
+      <div className="shared-invite-panel">
+        <div className="shared-invite-heading">
+          <p className="eyebrow">本地邀请链接实验</p>
+          <h3>小镇传送门</h3>
+          <div className="shared-invite-badges" aria-label="传送门安全边界">
+            <span>只解析，不联网</span>
+            <span>不会自动加入真实房间</span>
+            <span>刷新后丢失</span>
+            <span>不要在链接中放入密钥</span>
+          </div>
+        </div>
+
+        <div className="shared-invite-actions">
+          <button
+            type="button"
+            className="status-action"
+            disabled={!inviteCode}
+            onClick={handleGenerateInviteLink}
+          >
+            生成本地邀请链接
+          </button>
+          {generatedInviteLink ? (
+            <p className="shared-invite-output">{generatedInviteLink}</p>
+          ) : null}
+        </div>
+
+        <label className="status-field" htmlFor="shared-invite-link-input">
+          传送门链接
+          <input
+            id="shared-invite-link-input"
+            className="status-note-input"
+            value={inviteLinkInput}
+            onChange={(event) => setInviteLinkInput(event.target.value)}
+            autoComplete="off"
+          />
+        </label>
+        <button
+          type="button"
+          className="primary-action"
+          onClick={handleParseInviteLink}
+        >
+          解析传送门链接
+        </button>
+
+        {parsedInviteCode ? (
+          <div className="shared-invite-result" role="status">
+            <p>解析到邀请码：{parsedInviteCode}</p>
+            <p>本地解析完成，尚未自动加入。</p>
+          </div>
+        ) : null}
+        {inviteLinkError ? (
+          <p className="shared-demo-error" role="status">
+            {inviteLinkError}
+          </p>
         ) : null}
       </div>
 
@@ -153,6 +255,22 @@ export function SharedTownDemoPanel() {
 
 function getStatusLabel(statusKey: SelectableStatusKey | undefined) {
   return demoStatuses.find((status) => status.statusKey === statusKey)?.label
+}
+
+function getInviteLinkErrorMessage(reason: InviteLinkErrorReason) {
+  if (reason === 'forbidden_secret') {
+    return '链接包含敏感密钥，已拒绝'
+  }
+
+  if (reason === 'missing_invite_code' || reason === 'empty') {
+    return '缺少邀请码'
+  }
+
+  if (reason === 'invalid_invite_code') {
+    return '邀请码格式无效'
+  }
+
+  return '链接格式无效'
 }
 
 function formatServerTime(serverTime: string) {

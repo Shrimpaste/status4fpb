@@ -13,6 +13,21 @@ function joinDemoMember(displayName = '演示成员') {
   fireEvent.click(screen.getByRole('button', { name: '加入演示成员' }))
 }
 
+function generateInviteLink() {
+  fireEvent.click(screen.getByRole('button', { name: '生成本地邀请链接' }))
+}
+
+function parseInviteLink(value: string) {
+  fireEvent.change(screen.getByLabelText('传送门链接'), {
+    target: { value },
+  })
+  fireEvent.click(screen.getByRole('button', { name: '解析传送门链接' }))
+}
+
+function getSharedDemoMemberCount() {
+  return document.querySelectorAll('.shared-demo-member').length
+}
+
 describe('SharedTownDemoPanel', () => {
   it('renders the experiment label and no-network warning', () => {
     render(<SharedTownDemoPanel />)
@@ -81,5 +96,82 @@ describe('SharedTownDemoPanel', () => {
     joinDemoMember()
 
     expect(document.body.textContent).not.toContain('secret')
+  })
+
+  it('renders invite portal copy with local parse and no-network warnings', () => {
+    render(<SharedTownDemoPanel />)
+
+    expect(
+      screen.getByRole('heading', { name: '小镇传送门' }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('本地邀请链接实验')).toBeInTheDocument()
+    expect(screen.getByText('只解析，不联网')).toBeInTheDocument()
+    expect(screen.getByText('不会自动加入真实房间')).toBeInTheDocument()
+    expect(screen.getByText('不要在链接中放入密钥')).toBeInTheDocument()
+  })
+
+  it('generates an invite link after creating a demo room', () => {
+    render(<SharedTownDemoPanel />)
+
+    expect(
+      screen.getByRole('button', { name: '生成本地邀请链接' }),
+    ).toBeDisabled()
+
+    createRoom()
+    generateInviteLink()
+
+    expect(screen.getByText('/join?code=TOWN-0001')).toBeInTheDocument()
+    expect(document.body.textContent).not.toContain('memberSecret')
+    expect(document.body.textContent).not.toContain('token')
+    expect(document.body.textContent).not.toContain('credential')
+    expect(document.body.textContent).not.toContain('authorization')
+  })
+
+  it('parses a valid invite link without automatically joining a member', () => {
+    render(<SharedTownDemoPanel />)
+
+    createRoom()
+    const memberCountBeforeParse = getSharedDemoMemberCount()
+    parseInviteLink('/join?code=TOWN-0001')
+
+    expect(screen.getByText('解析到邀请码：TOWN-0001')).toBeInTheDocument()
+    expect(screen.getByText('本地解析完成，尚未自动加入。')).toBeInTheDocument()
+    expect(getSharedDemoMemberCount()).toBe(memberCountBeforeParse)
+  })
+
+  it('rejects invite links containing memberSecret without echoing the value', () => {
+    render(<SharedTownDemoPanel />)
+
+    parseInviteLink('/join?code=TOWN-0001&memberSecret=secret_1')
+
+    expect(screen.getByText('链接包含敏感密钥，已拒绝')).toBeInTheDocument()
+    expect(document.body.textContent).not.toContain('secret_1')
+  })
+
+  it('rejects invite links containing secret, token, credential, or authorization', () => {
+    render(<SharedTownDemoPanel />)
+
+    for (const field of ['secret', 'token', 'credential', 'authorization']) {
+      parseInviteLink(`/join?code=TOWN-0001&${field}=nope`)
+
+      expect(screen.getByText('链接包含敏感密钥，已拒绝')).toBeInTheDocument()
+      expect(document.body.textContent).not.toContain('nope')
+    }
+  })
+
+  it('resets generated and parsed invite link state', () => {
+    render(<SharedTownDemoPanel />)
+
+    createRoom()
+    generateInviteLink()
+    parseInviteLink('/join?code=TOWN-0001')
+
+    expect(screen.getByText('/join?code=TOWN-0001')).toBeInTheDocument()
+    expect(screen.getByText('解析到邀请码：TOWN-0001')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: '重置实验' }))
+
+    expect(screen.queryByText('/join?code=TOWN-0001')).toBeNull()
+    expect(screen.queryByText('解析到邀请码：TOWN-0001')).toBeNull()
   })
 })

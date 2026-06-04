@@ -13,12 +13,14 @@ const DEMO_JOINED_MEMBER = {
   avatarKey: 'green',
   color: '#66d4d8',
 }
+const DEMO_INVITE_CODE = 'TOWN-0001'
 
 type LocalSharedTownSession = ReturnType<typeof createLocalSharedTownSession>
 
 export function useLocalSharedTownDemo() {
   const sessionRef = useRef<LocalSharedTownSession | null>(null)
   const inviteCodeRef = useRef<string | null>(null)
+  const [inviteCode, setInviteCode] = useState<string | null>(null)
   const [displayState, setDisplayState] =
     useState<SharedTownDisplayState | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -27,7 +29,11 @@ export function useLocalSharedTownDemo() {
   const statuses = useMemo(() => displayState?.statuses ?? {}, [displayState])
 
   const createDemoRoom = useCallback(() => {
-    const session = createLocalSharedTownSession()
+    const session = createLocalSharedTownSession({
+      idFactory: {
+        inviteCode: () => DEMO_INVITE_CODE,
+      },
+    })
     const created = session.createRoom({
       roomName: DEMO_ROOM_NAME,
       creator: DEMO_CREATOR,
@@ -35,21 +41,22 @@ export function useLocalSharedTownDemo() {
 
     sessionRef.current = session
     inviteCodeRef.current = created.inviteCode
+    setInviteCode(created.inviteCode)
     setErrorMessage(null)
     setDisplayState(created.displayState)
   }, [])
 
   const joinDemoMember = useCallback((displayName: string) => {
     const session = sessionRef.current
-    const inviteCode = inviteCodeRef.current
+    const currentInviteCode = inviteCodeRef.current
     const trimmedName = displayName.trim()
 
-    if (!session || !inviteCode || !trimmedName) {
+    if (!session || !currentInviteCode || !trimmedName) {
       return
     }
 
     const joined = session.joinRoom({
-      inviteCode,
+      inviteCode: currentInviteCode,
       member: {
         displayName: trimmedName,
         ...DEMO_JOINED_MEMBER,
@@ -104,12 +111,14 @@ export function useLocalSharedTownDemo() {
   const resetDemo = useCallback(() => {
     sessionRef.current = null
     inviteCodeRef.current = null
+    setInviteCode(null)
     setErrorMessage(null)
     setDisplayState(null)
   }, [])
 
   return {
     isActive: displayState !== null,
+    inviteCode,
     displayState,
     members,
     statuses,

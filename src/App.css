@@ -148,6 +148,66 @@
   gap: 14px;
 }
 
+.shared-invite-panel {
+  min-width: 0;
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+  background: #fffaf0;
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 rgba(28, 33, 40, 0.18);
+}
+
+.shared-invite-heading {
+  display: grid;
+  gap: 8px;
+}
+
+.shared-invite-heading h3 {
+  margin: 0;
+  font-size: 1.12rem;
+}
+
+.shared-invite-badges,
+.shared-invite-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.shared-invite-badges span {
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px 8px;
+  background: #d9c8ff;
+  border: 2px solid var(--ink);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.shared-invite-output,
+.shared-invite-result p {
+  margin: 0;
+}
+
+.shared-invite-output {
+  max-width: 100%;
+  padding: 7px 9px;
+  overflow-wrap: anywhere;
+  background: #b8e6dd;
+  border: 3px solid var(--ink);
+  font-weight: 900;
+}
+
+.shared-invite-result {
+  padding: 8px 10px;
+  display: grid;
+  gap: 4px;
+  background: #d8eec2;
+  border: 3px solid var(--ink);
+  font-weight: 900;
+}
+
 .shared-demo-room-meta {
   display: grid;
   gap: 6px;
