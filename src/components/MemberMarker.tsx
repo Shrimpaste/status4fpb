@@ -12,6 +12,18 @@ const statusActionVignettes: Record<StatusKey, string> = {
   unknown: '路牌待机',
 }
 
+const statusVisualElements: Record<StatusKey, string[]> = {
+  exam_paper: ['📋', '🪑', '💭'],
+  scope_shrinking: ['🏠', '⭕', '🫣'],
+  fishing: ['🐟', '🎣', '💭'],
+  vocabulary: ['📚', '📖', '💭'],
+  sleeping: ['💤', '😴', '🌙'],
+  deadline: ['⏰', '🔥', '💨'],
+  offline: ['🏠', '💤', '🌫️'],
+  idle: ['☀️', '🌿', '💭'],
+  unknown: ['❓', '💭', '❓'],
+}
+
 type MemberMarkerProps = {
   member: Member
   status: EffectiveStatus
@@ -20,12 +32,21 @@ type MemberMarkerProps = {
 
 export function MemberMarker({ member, status, zoneLabel }: MemberMarkerProps) {
   const actionVignette = statusActionVignettes[status.statusKey]
+  const visualElements = statusVisualElements[status.statusKey]
+  const isExpired = status.source === 'expired_fallback'
 
   return (
     <span
-      className="member-marker"
+      className={`member-marker status-${status.statusKey} ${isExpired ? 'expired' : ''}`}
       aria-label={`成员 ${member.displayName} 当前 ${status.label}，位于 ${zoneLabel}，正在${actionVignette}`}
     >
+      <span className="member-visual-elements" aria-hidden="true">
+        {visualElements.map((element, index) => (
+          <span key={index} className={`visual-element element-${index}`}>
+            {element}
+          </span>
+        ))}
+      </span>
       <span className={`mini-sprite ${member.avatarKey}`} aria-hidden="true" />
       <strong>{member.displayName}</strong>
       <span className="member-vignette">{actionVignette}</span>
