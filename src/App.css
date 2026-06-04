@@ -513,6 +513,27 @@
   font-weight: 900;
 }
 
+.status-source {
+  width: fit-content;
+  margin: 0;
+  padding: 4px 8px;
+  border: 2px solid var(--ink);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.status-source.current {
+  background: #d8eec2;
+}
+
+.status-source.expired_fallback {
+  background: #ffd0bf;
+}
+
+.status-source.missing {
+  background: #d9d9df;
+}
+
 .status-note,
 .status-expiry {
   margin: 0;

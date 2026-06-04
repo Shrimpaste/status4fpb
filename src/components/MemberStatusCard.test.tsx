@@ -92,6 +92,57 @@ describe('MemberStatusCard', () => {
     expect(within(card).getByText(/^有效期至：/)).toBeInTheDocument()
   })
 
+  it('shows a readable status source badge', () => {
+    const { rerender } = render(
+      <MemberStatusCard
+        member={member}
+        status={status}
+        statuses={Object.values(STATUS_PRESETS)}
+        isPendingDelete={false}
+        onSelectStatus={vi.fn()}
+        onDeleteClick={vi.fn()}
+      />,
+    )
+
+    const card = screen.getByLabelText('成员 北北')
+
+    expect(within(card).getByText('手动状态')).toBeInTheDocument()
+
+    rerender(
+      <MemberStatusCard
+        member={member}
+        status={{
+          ...STATUS_PRESETS.offline,
+          memberId: member.id,
+          source: 'expired_fallback',
+        }}
+        statuses={Object.values(STATUS_PRESETS)}
+        isPendingDelete={false}
+        onSelectStatus={vi.fn()}
+        onDeleteClick={vi.fn()}
+      />,
+    )
+
+    expect(within(card).getByText('过期兜底')).toBeInTheDocument()
+
+    rerender(
+      <MemberStatusCard
+        member={member}
+        status={{
+          ...STATUS_PRESETS.unknown,
+          memberId: member.id,
+          source: 'missing',
+        }}
+        statuses={Object.values(STATUS_PRESETS)}
+        isPendingDelete={false}
+        onSelectStatus={vi.fn()}
+        onDeleteClick={vi.fn()}
+      />,
+    )
+
+    expect(within(card).getByText('未设置')).toBeInTheDocument()
+  })
+
   it('renders delete and confirm delete states through props', () => {
     const onDeleteClick = vi.fn()
     const { rerender } = render(
