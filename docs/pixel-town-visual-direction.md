@@ -143,8 +143,10 @@ Suggested layout:
 
 - Pixel-like but readable at normal desktop size.
 - Bright, varied palette with grounded contrast.
-- A future visual overhaul may study cozy pixel town references such as Stardew Valley for atmosphere, scale, and "lived-in village" pacing, but only as broad inspiration.
-- Do not copy specific game assets, map layouts, characters, UI frames, typography, palette recipes, or franchise-identifying details.
+- A future visual overhaul may study broad cozy pixel town and life-sim references for atmosphere, scale, and "lived-in village" pacing, but only as mood inspiration.
+- Stardew Valley can be treated as one contextual example inside that broader reference class, not as a target style.
+- Do not copy Stardew Valley or any specific game assets, map layouts, characters, UI frames, typography, palette recipes, or franchise-identifying details.
+- Before a large visual pass, create an original moodboard/component survey and review copyright, licensing, and product-boundary risks with the ChatGPT web review thread.
 - Prefer original landmarks that match this product's study/status metaphor rather than generic RPG or farming mechanics.
 - Avoid a single dominant hue family.
 - Avoid official QQ/Tencent color cues as the main brand signal.
