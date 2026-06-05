@@ -45,6 +45,10 @@ export function MemberStatusCard({
   const currentNote = status.source === 'current' ? status.note : undefined
   const currentExpiresAt =
     status.source === 'current' ? status.expiresAt : undefined
+  const selectedStatusKey =
+    status.source === 'current' && status.statusKey !== 'unknown'
+      ? status.statusKey
+      : undefined
 
   function handleSelectStatus(statusKey: SelectableStatusKey) {
     const trimmedNote = note.trim()
@@ -110,6 +114,7 @@ export function MemberStatusCard({
       <StatusButtonGroup
         displayName={member.displayName}
         statuses={statuses}
+        selectedStatusKey={selectedStatusKey}
         onSelectStatus={handleSelectStatus}
       />
       <button

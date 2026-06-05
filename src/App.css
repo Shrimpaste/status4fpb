@@ -89,10 +89,10 @@
   box-shadow: 5px 5px 0 var(--ink);
 }
 
-.primary-action:focus-visible,
-.status-action:focus-visible,
-.add-member-form input:focus-visible,
-.reset-action:focus-visible {
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 4px;
 }
@@ -560,13 +560,20 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .town-zone,
-  .town-zone::before,
-  .town-zone-icon,
-  .member-marker,
-  .visual-element {
-    animation: none;
-    transition: none;
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+
+  .primary-action:hover,
+  .status-action:hover,
+  .town-zone:hover,
+  .town-zone:hover .town-zone-icon,
+  .member-marker:hover {
+    transform: none;
   }
 }
 
@@ -785,6 +792,11 @@
   background: var(--panel);
   box-shadow: 3px 3px 0 rgba(28, 33, 40, 0.2);
   text-align: left;
+}
+
+.status-action[aria-pressed='true'] {
+  background: var(--accent);
+  box-shadow: 2px 2px 0 var(--ink);
 }
 
 .status-action-label,

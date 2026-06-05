@@ -85,4 +85,25 @@ describe('StatusButtonGroup', () => {
 
     expect(onSelectStatus).toHaveBeenCalledWith('scope_shrinking')
   })
+
+  it('marks the current status button as pressed when selected', () => {
+    render(
+      <StatusButtonGroup
+        displayName="Beibei"
+        statuses={Object.values(STATUS_PRESETS)}
+        selectedStatusKey="exam_paper"
+        onSelectStatus={vi.fn()}
+      />,
+    )
+
+    const examButton = screen
+      .getByText(STATUS_PRESETS.exam_paper.label)
+      .closest('button')
+    const scopeButton = screen
+      .getByText(STATUS_PRESETS.scope_shrinking.label)
+      .closest('button')
+
+    expect(examButton).toHaveAttribute('aria-pressed', 'true')
+    expect(scopeButton).toHaveAttribute('aria-pressed', 'false')
+  })
 })

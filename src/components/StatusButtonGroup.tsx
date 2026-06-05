@@ -8,12 +8,14 @@ type SelectableStatusPreset = StatusPreset & {
 type StatusButtonGroupProps = {
   displayName: string
   statuses: StatusPreset[]
+  selectedStatusKey?: SelectableStatusKey
   onSelectStatus: (statusKey: SelectableStatusKey) => void
 }
 
 export function StatusButtonGroup({
   displayName,
   statuses,
+  selectedStatusKey,
   onSelectStatus,
 }: StatusButtonGroupProps) {
   const selectableStatuses = statuses.filter(
@@ -54,6 +56,11 @@ export function StatusButtonGroup({
                   key={preset.statusKey}
                   className="status-action"
                   onClick={() => onSelectStatus(preset.statusKey)}
+                  aria-pressed={
+                    selectedStatusKey === undefined
+                      ? undefined
+                      : preset.statusKey === selectedStatusKey
+                  }
                   aria-label={`设置${displayName}为${preset.label}`}
                 >
                   <span className="status-action-label">{preset.label}</span>
