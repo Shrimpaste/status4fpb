@@ -39,6 +39,38 @@ describe('StatusButtonGroup', () => {
     expect(screen.queryByText('未知区')).toBeNull()
   })
 
+  it('renders selectable statuses under semantic group headings', () => {
+    render(
+      <StatusButtonGroup
+        displayName="北北"
+        statuses={Object.values(STATUS_PRESETS)}
+        onSelectStatus={vi.fn()}
+      />,
+    )
+
+    const studyGroup = screen.getByRole('group', { name: '学习 / 备考' })
+    const restGroup = screen.getByRole('group', { name: '休息 / 摸鱼' })
+    const workGroup = screen.getByRole('group', { name: '创作 / 工作' })
+    const fallbackGroup = screen.getByRole('group', { name: '特殊 / 兜底' })
+
+    expect(
+      within(studyGroup).getByRole('button', { name: '设置北北为套卷中' }),
+    ).toBeInTheDocument()
+    expect(
+      within(studyGroup).getByRole('button', { name: '设置北北为缩圈中' }),
+    ).toBeInTheDocument()
+    expect(
+      within(restGroup).getByRole('button', { name: '设置北北为摸鱼中' }),
+    ).toBeInTheDocument()
+    expect(
+      within(workGroup).getByRole('button', { name: '设置北北为赶 ddl 中' }),
+    ).toBeInTheDocument()
+    expect(
+      within(fallbackGroup).getByRole('button', { name: '设置北北为失联中' }),
+    ).toBeInTheDocument()
+    expect(within(fallbackGroup).queryByText('未知')).toBeNull()
+  })
+
   it('passes the selected status key to the callback', () => {
     const onSelectStatus = vi.fn()
     render(

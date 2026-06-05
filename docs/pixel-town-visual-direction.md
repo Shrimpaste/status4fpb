@@ -27,6 +27,7 @@ status4fpb should feel like a small Windows tray companion for playful group pre
 - Local-first.
 - Manual and consentful.
 - Warm study-town atmosphere.
+- Cozy farming/life-sim town mood as inspiration, while remaining original.
 - Friendly group presence, not surveillance.
 - Independent product, not official QQ/Tencent branding.
 
@@ -142,6 +143,9 @@ Suggested layout:
 
 - Pixel-like but readable at normal desktop size.
 - Bright, varied palette with grounded contrast.
+- A future visual overhaul may study cozy pixel town references such as Stardew Valley for atmosphere, scale, and "lived-in village" pacing, but only as broad inspiration.
+- Do not copy specific game assets, map layouts, characters, UI frames, typography, palette recipes, or franchise-identifying details.
+- Prefer original landmarks that match this product's study/status metaphor rather than generic RPG or farming mechanics.
 - Avoid a single dominant hue family.
 - Avoid official QQ/Tencent color cues as the main brand signal.
 - Rounded UI can stay modest; landmark tiles should feel crisp and grid-aligned.
@@ -175,6 +179,7 @@ Goal: make the app visually distinctive without external license risk.
 - Record source URL, author, license, checked date, local path, and modification notes before adoption.
 - Prefer one cohesive pack over mixing unrelated packs.
 - Do not import assets whose license is unclear or whose style implies another franchise.
+- Before a major UI art pass, collect current reference components, pixel-art tooling options, and design-system candidates, then ask the ChatGPT web review thread to critique the direction and copyright/license boundaries.
 
 Goal: enrich the town if self-made art is not enough.
 

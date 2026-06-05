@@ -5,6 +5,7 @@ import {
   getTownZoneForStatus,
   townZoneByKey,
 } from './townLayout'
+import { STATUS_PRESET_GROUPS } from '../data/statusPresetGroups'
 
 const statusKeys: StatusKey[] = [
   'exam_paper',
@@ -32,5 +33,15 @@ describe('townLayout', () => {
 
   it('keeps the first implementation slice to one zone per status', () => {
     expect(TOWN_ZONES).toHaveLength(statusKeys.length)
+  })
+
+  it('maps every grouped status to a town zone', () => {
+    for (const group of STATUS_PRESET_GROUPS) {
+      for (const statusKey of group.statusKeys) {
+        const zoneKey = getTownZoneForStatus(statusKey)
+
+        expect(townZoneByKey[zoneKey]).toBeDefined()
+      }
+    }
   })
 })
