@@ -21,6 +21,8 @@ The web ChatGPT reviewer should also include this reminder at the start of each 
 
 status4fpb is a local-first QQ group friend status toy. The current Web MVP uses a pixel-home metaphor for virtual group members and manual statuses. The longer-term direction is a daily-use tray-style companion, but the product must keep explicit privacy boundaries before any desktop or integration work.
 
+Future major UI redesigns should explore a cozy pixel-town direction inspired by warm farming/life-sim towns such as Stardew Valley: readable top-down landmarks, a lived-in village atmosphere, varied seasonal color, and compact tool-like usability. Treat this as mood and interaction inspiration only; do not copy specific assets, layouts, characters, UI chrome, or franchise-identifying style. Before a large visual pass, gather current reference components/design tools and discuss the direction with the ChatGPT web review thread.
+
 ## Current MVP
 
 - Add virtual members.

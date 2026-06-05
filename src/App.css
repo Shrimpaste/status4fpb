@@ -743,6 +743,41 @@
   gap: 8px;
 }
 
+.status-action-group {
+  min-width: min(100%, 180px);
+  padding: 8px;
+  display: grid;
+  gap: 8px;
+  border: 2px solid rgba(28, 33, 40, 0.45);
+  background: rgba(255, 250, 240, 0.62);
+}
+
+.status-action-group-heading {
+  display: grid;
+  gap: 3px;
+}
+
+.status-action-group-heading h3,
+.status-action-group-heading p {
+  margin: 0;
+}
+
+.status-action-group-heading h3 {
+  font-size: 0.82rem;
+}
+
+.status-action-group-heading p {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.status-action-group-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .status-action {
   padding: 6px 10px;
   display: grid;
