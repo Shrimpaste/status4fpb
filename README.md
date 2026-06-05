@@ -82,12 +82,22 @@ npm run dev
 
 Open the local URL printed by Vite, usually `http://localhost:5173`.
 
+Optional desktop shell smoke:
+
+```bash
+npm run tauri:dev
+```
+
+The Tauri shell is a local desktop wrapper direction only; it does not add QQ integration, background sync, cloud sync, or real shared rooms.
+
 ## Verify
 
 ```bash
 npm test
 npm run lint
 npm run build
+cargo fmt --manifest-path src-tauri/Cargo.toml --check
+cargo check --manifest-path src-tauri/Cargo.toml
 ```
 
 ## Manual Acceptance
