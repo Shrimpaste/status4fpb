@@ -21,20 +21,34 @@ The web ChatGPT reviewer should also include this reminder at the start of each 
 
 status4fpb is a local-first QQ group friend status toy. The current Web MVP uses a pixel-home metaphor for virtual group members and manual statuses. The longer-term direction is a daily-use tray-style companion, but the product must keep explicit privacy boundaries before any desktop or integration work.
 
-Future major UI redesigns should explore a cozy pixel-town direction inspired by warm farming/life-sim towns such as Stardew Valley: readable top-down landmarks, a lived-in village atmosphere, varied seasonal color, and compact tool-like usability. Treat this as mood and interaction inspiration only; do not copy specific assets, layouts, characters, UI chrome, or franchise-identifying style. Before a large visual pass, gather current reference components/design tools and discuss the direction with the ChatGPT web review thread.
+Future major UI redesigns should explore a broad cozy pixel-town and life-sim mood direction: readable top-down landmarks, a lived-in village atmosphere, varied seasonal color, and compact tool-like usability. Treat this as mood and interaction inspiration only; do not copy Stardew Valley or any specific assets, layouts, characters, UI chrome, map structure, palette-identifying details, or franchise style. Before a large visual pass, gather current reference components/design tools and discuss the direction with the ChatGPT web review thread.
 
 ## Current MVP
 
 - Add virtual members.
 - Set manual statuses, including `套卷中` and `缩圈中`.
+- Group status presets by town-like meanings.
 - Add short status notes.
 - Choose preset expiration times.
 - Fall back to `失联中` after expiration.
 - Persist data in browser `localStorage`.
 - Delete members with two-click confirmation.
 - Reset the whole local home with two-click confirmation.
+- Clarify empty, delete, and reset copy as local-only.
+- Expose status button selected state and visible keyboard focus.
+- Respect reduced motion.
+- Offer a local shared town lab and invite link checker that do not network or auto-join.
 - Recover from corrupt or invalid stored data.
 - Verify with automated tests, lint, build, browser smoke checks, and web GPT review.
+
+## Release Polish State
+
+- `codex/status-preset-groups-v1` grouped status controls by town semantics.
+- `codex/release-polish-accessibility-v1` added status control selected semantics, visible focus, and reduced-motion hardening.
+- `codex/release-polish-empty-reset-v1` clarified local-only empty state, delete, reset, and shared-lab copy.
+- The next agent should run [release-checklist.md](release-checklist.md) before proposing a release-ready slice.
+- Untracked `CLAUDE.md`, `chatgpt*.png`, and `screenshot*.png` files are local artifacts unless the user explicitly asks to add them.
+- Any shared-town real implementation, Tauri tray work, network behavior, external dependency, or visual component/tool adoption needs ChatGPT web review before implementation.
 
 ## Collaboration Loop
 
@@ -78,7 +92,7 @@ The MVP stores data in browser `localStorage` under:
 qq-status-pixel-home:v1
 ```
 
-Use the in-app `重置家园` action to clear this key. It only clears this browser's local status4fpb data and does not affect any QQ data.
+Use the in-app `重置本地家园` action to clear this key. It only clears this browser's local status4fpb data and does not affect any QQ data.
 
 ## Next Strategic Stages
 
@@ -96,5 +110,6 @@ After context compaction, interruption, or a new agent session:
 2. Run `git status --short`.
 3. Inspect recent commits with `git log --oneline --decorate --max-count=8`.
 4. Run `npm test`, `npm run lint`, and `npm run build`.
-5. Open the local app and ChatGPT web review thread if continuing development.
-6. Report current state to the web reviewer before choosing the next implementation step.
+5. Review [release-checklist.md](release-checklist.md) for the current release gate.
+6. Open the local app and ChatGPT web review thread if continuing development.
+7. Report current state to the web reviewer before choosing the next implementation step.
