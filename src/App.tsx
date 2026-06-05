@@ -77,14 +77,24 @@ function App() {
           先用手动状态和虚拟头像搭起一个安全的像素小镇，再逐步扩展状态逻辑和授权数据源。
         </p>
         <AddMemberForm onAddMember={handleAddMember} />
+        {state.members.length === 0 ? (
+          <p className="local-boundary-note">
+            手动添加一个名字和状态，先在本地看看今天的小镇气氛。不会连接 QQ，也不会上传数据。
+          </p>
+        ) : null}
         <span className="privacy-note">MVP 不接入 QQ 私有接口</span>
+        <p className="reset-hint">
+          只清空本地手动小镇，不影响真实 QQ，也不会联网。
+        </p>
         <button
           type="button"
           className="reset-action"
           onClick={handleResetClick}
-          aria-label={pendingReset ? '确认重置家园' : '重置家园'}
+          aria-label={
+            pendingReset ? '确认重置本地家园记录' : '重置本地家园记录'
+          }
         >
-          {pendingReset ? '确认重置家园' : '重置家园'}
+          {pendingReset ? '确认重置本地家园' : '重置本地家园'}
         </button>
       </section>
 

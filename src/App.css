@@ -42,6 +42,23 @@
   color: var(--text);
 }
 
+.local-boundary-note,
+.reset-hint,
+.shared-demo-help {
+  margin: 0;
+  padding: 8px 10px;
+  background: rgba(255, 250, 240, 0.72);
+  border: 2px solid rgba(28, 33, 40, 0.38);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.reset-hint {
+  background: #fff0b8;
+}
+
 .add-member-form {
   display: grid;
   gap: 10px;

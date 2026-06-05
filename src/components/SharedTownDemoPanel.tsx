@@ -77,7 +77,10 @@ export function SharedTownDemoPanel() {
       <div className="shared-demo-heading">
         <p className="eyebrow">Local shared town demo</p>
         <h2 id="shared-demo-title">共享小镇实验室</h2>
-        <p className="shared-demo-warning">本地模拟，不联网，刷新后丢失</p>
+        <p className="shared-demo-warning">本地实验室，不联网，刷新后丢失</p>
+        <p className="shared-demo-help">
+          只清空本次本地实验室状态，不会连接 QQ，也不会上传数据。
+        </p>
       </div>
 
       <div className="shared-demo-actions">
@@ -89,8 +92,13 @@ export function SharedTownDemoPanel() {
           创建共享小镇
         </button>
         {isActive ? (
-          <button type="button" className="reset-action" onClick={handleResetDemo}>
-            重置实验
+          <button
+            type="button"
+            className="reset-action"
+            onClick={handleResetDemo}
+            aria-label="重置本次本地实验室状态"
+          >
+            重置本地实验
           </button>
         ) : null}
       </div>
@@ -246,7 +254,7 @@ export function SharedTownDemoPanel() {
         </div>
       ) : (
         <p className="shared-demo-empty">
-          创建后会生成一个只存在于当前页面内存里的 mock room。
+          创建后会生成一个只存在于当前页面内存里的本地 mock room，不会联网。
         </p>
       )}
     </section>
