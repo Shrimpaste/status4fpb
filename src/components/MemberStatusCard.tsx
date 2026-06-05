@@ -123,8 +123,8 @@ export function MemberStatusCard({
         onClick={() => onDeleteClick(member.id)}
         aria-label={
           isPendingDelete
-            ? `确认删除${member.displayName}`
-            : `删除${member.displayName}`
+            ? `确认从本地小镇删除${member.displayName}的小镇记录`
+            : `从本地小镇删除${member.displayName}的小镇记录`
         }
       >
         {isPendingDelete ? '确认删除' : '删除'}

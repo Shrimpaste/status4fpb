@@ -157,7 +157,11 @@ describe('MemberStatusCard', () => {
       />,
     )
 
-    fireEvent.click(screen.getByRole('button', { name: '删除北北' }))
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: '从本地小镇删除北北的小镇记录',
+      }),
+    )
     expect(onDeleteClick).toHaveBeenCalledWith('m1')
 
     rerender(
@@ -171,7 +175,11 @@ describe('MemberStatusCard', () => {
       />,
     )
 
-    fireEvent.click(screen.getByRole('button', { name: '确认删除北北' }))
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: '确认从本地小镇删除北北的小镇记录',
+      }),
+    )
     expect(onDeleteClick).toHaveBeenCalledWith('m1')
   })
 })

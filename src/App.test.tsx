@@ -27,6 +27,12 @@ describe('App', () => {
     expect(screen.getByLabelText('群友昵称')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '添加群友' })).toBeEnabled()
     expect(screen.getByText('还没有群友入住')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        '手动添加一个名字和状态，先在本地看看今天的小镇气氛。不会连接 QQ，也不会上传数据。',
+      ),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('note')).not.toHaveTextContent(/在线同步|登录 QQ|云端/)
     expect(screen.getByText('自习桌')).toBeInTheDocument()
     expect(screen.queryByText('study_desk')).not.toBeInTheDocument()
   })
@@ -119,14 +125,24 @@ describe('App', () => {
     addMemberThroughUi()
     fireEvent.click(screen.getByRole('button', { name: '设置北北为套卷中' }))
 
-    fireEvent.click(screen.getByRole('button', { name: '删除北北' }))
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: '从本地小镇删除北北的小镇记录',
+      }),
+    )
 
     expect(screen.getByLabelText('成员 北北')).toBeInTheDocument()
     expect(
-      screen.getByRole('button', { name: '确认删除北北' }),
+      screen.getByRole('button', {
+        name: '确认从本地小镇删除北北的小镇记录',
+      }),
     ).toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: '确认删除北北' }))
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: '确认从本地小镇删除北北的小镇记录',
+      }),
+    )
 
     expect(screen.queryByLabelText('成员 北北')).not.toBeInTheDocument()
     const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? '{}')
@@ -218,15 +234,25 @@ describe('App', () => {
     render(<App />)
 
     addMemberThroughUi()
-    fireEvent.click(screen.getByRole('button', { name: '删除北北' }))
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: '从本地小镇删除北北的小镇记录',
+      }),
+    )
 
     expect(
-      screen.getByRole('button', { name: '确认删除北北' }),
+      screen.getByRole('button', {
+        name: '确认从本地小镇删除北北的小镇记录',
+      }),
     ).toBeInTheDocument()
 
     addMemberThroughUi('南南')
 
-    expect(screen.queryByRole('button', { name: '确认删除北北' })).toBeNull()
+    expect(
+      screen.queryByRole('button', {
+        name: '确认从本地小镇删除北北的小镇记录',
+      }),
+    ).toBeNull()
     expect(screen.getByLabelText('成员 北北')).toBeInTheDocument()
     expect(screen.getByLabelText('成员 南南')).toBeInTheDocument()
   })
@@ -237,15 +263,22 @@ describe('App', () => {
     addMemberThroughUi()
     fireEvent.click(screen.getByRole('button', { name: '设置北北为套卷中' }))
 
-    fireEvent.click(screen.getByRole('button', { name: '重置家园' }))
+    expect(
+      screen.getByText('只清空本地手动小镇，不影响真实 QQ，也不会联网。'),
+    ).toBeInTheDocument()
+    fireEvent.click(
+      screen.getByRole('button', { name: '重置本地家园记录' }),
+    )
 
     expect(screen.getByLabelText('成员 北北')).toBeInTheDocument()
     expect(window.localStorage.getItem(STORAGE_KEY)).not.toBeNull()
     expect(
-      screen.getByRole('button', { name: '确认重置家园' }),
-    ).toHaveTextContent('确认重置家园')
+      screen.getByRole('button', { name: '确认重置本地家园记录' }),
+    ).toHaveTextContent('确认重置本地家园')
 
-    fireEvent.click(screen.getByRole('button', { name: '确认重置家园' }))
+    fireEvent.click(
+      screen.getByRole('button', { name: '确认重置本地家园记录' }),
+    )
 
     expect(screen.queryByLabelText('成员 北北')).not.toBeInTheDocument()
     expect(screen.getByText('还没有群友入住')).toBeInTheDocument()
@@ -282,6 +315,7 @@ describe('App', () => {
   it('describes the demo as local mock with no network and refresh loss', () => {
     render(<App />)
 
-    expect(screen.getByText('本地模拟，不联网，刷新后丢失')).toBeInTheDocument()
+    expect(screen.getByText('本地实验室，不联网，刷新后丢失')).toBeInTheDocument()
+    expect(document.body).not.toHaveTextContent(/云同步|在线房间|真实共享|邀请群友上线/)
   })
 })

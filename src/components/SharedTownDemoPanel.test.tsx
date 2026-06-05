@@ -35,7 +35,11 @@ describe('SharedTownDemoPanel', () => {
     expect(
       screen.getByRole('heading', { name: '共享小镇实验室' }),
     ).toBeInTheDocument()
-    expect(screen.getByText('本地模拟，不联网，刷新后丢失')).toBeInTheDocument()
+    expect(screen.getByText('本地实验室，不联网，刷新后丢失')).toBeInTheDocument()
+    expect(
+      screen.getByText('只清空本次本地实验室状态，不会连接 QQ，也不会上传数据。'),
+    ).toBeInTheDocument()
+    expect(document.body).not.toHaveTextContent(/云同步|在线房间|真实共享|邀请群友上线/)
   })
 
   it('creates a room and shows the first demo member', () => {
@@ -83,7 +87,9 @@ describe('SharedTownDemoPanel', () => {
     const memberCard = screen.getByLabelText('共享成员 演示成员')
     expect(within(memberCard).getByText('已离开')).toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: '重置实验' }))
+    fireEvent.click(
+      screen.getByRole('button', { name: '重置本次本地实验室状态' }),
+    )
 
     expect(screen.queryByText('房间：共享小镇实验室')).toBeNull()
     expect(screen.getByRole('button', { name: '创建共享小镇' })).toBeEnabled()
@@ -169,7 +175,9 @@ describe('SharedTownDemoPanel', () => {
     expect(screen.getByText('/join?code=TOWN-0001')).toBeInTheDocument()
     expect(screen.getByText('解析到邀请码：TOWN-0001')).toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: '重置实验' }))
+    fireEvent.click(
+      screen.getByRole('button', { name: '重置本次本地实验室状态' }),
+    )
 
     expect(screen.queryByText('/join?code=TOWN-0001')).toBeNull()
     expect(screen.queryByText('解析到邀请码：TOWN-0001')).toBeNull()
